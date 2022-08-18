@@ -1,0 +1,64 @@
+{
+  "name": "react-layout",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "tsm": "typed-scss-modules src/**/module.scss -n none -e default -d @import'./src/shared/styles/global.scss'; -u",
+    "start": "concurrently \"npm:tsm -- -w\" \"craco start\"",
+    "build": "npm run tsm && craco build",
+    "test": "concurrently \"npm:tsm -- -w\" \"craco test\"",
+    "eject": "craco eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "classnames": "^2.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.3.0",
+    "react-router-dom": "^6.3.0",
+    "the-new-css-reset": "^1.7.2"
+  },
+  "devDependencies": {
+    "@craco/craco": "^6.4.5",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.11.41",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "concurrently": "^7.3.0",
+    "craco-sass-resources-loader": "^1.1.0",
+    "eslint": "^8.18.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "node-sass": "^7.0.1",
+    "prettier": "2.7.1",
+    "react-app-alias": "^2.2.1",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.54.3",
+    "serve": "^14.0.1",
+    "typed-scss-modules": "^6.5.0",
+    "typescript": "^4.7.4"
+  }
+}
