@@ -1,0 +1,33 @@
+.root {
+  display: grid;
+  row-gap: 5px;
+
+  width: 100%;
+  max-width: $control-max-width;
+
+  &--theme_error {
+    & .field {
+      color: $error-color;
+      --input-br-color: #{$error-color};
+    }
+  }
+}
+
+.text {
+  text-transform: uppercase;
+}
+
+.field {
+  @include control(var(--input-br-color, #{$primary-color}));
+
+  &::placeholder {
+    opacity: 0.3;
+
+    transition: opacity 0.1 ease-in-out;
+  }
+
+  &:hover::placeholder,
+  &:focus::placeholder {
+    opacity: 1;
+  }
+}
