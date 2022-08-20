@@ -1,0 +1,10 @@
+.container {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  row-gap: 30px;
+
+  padding: 100px 0;
+}

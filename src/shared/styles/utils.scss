@@ -18,3 +18,74 @@
   clip-path: inset(100%);
   clip: rect(0 0 0 0);
 }
+
+@mixin media-desktop {
+  @media (max-width: $screen-desktop) {
+    @content;
+  }
+}
+
+@mixin media-desktop-up {
+  @media (min-width: calc($screen-desktop + 1px)) {
+    @content;
+  }
+}
+
+@mixin media-tablet {
+  @media (max-width: $screen-tablet) {
+    @content;
+  }
+}
+
+@mixin media-tablet-up {
+  @media (max-width: calc($screen-tablet + 1px)) {
+    @content;
+  }
+}
+
+@mixin media-mobile {
+  @media (max-width: $screen-mobile) {
+    @content;
+  }
+}
+
+@mixin media-mobile-up {
+  @media (max-width: calc($screen-mobile + 1px)) {
+    @content;
+  }
+}
+
+@mixin container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 var(--container-x-paddings, #{$container-paddings-desktop});
+
+  @include media-tablet {
+    --container-x-paddings: #{$container-paddings-tablet};
+  }
+
+  @include media-mobile {
+    --container-x-paddings: #{$container-paddings-mobile};
+  }
+}
+
+@mixin container-width-bg($bg: white) {
+  @include container;
+
+  $container-margin: calc(calc(100vw - 100%) / 2);
+
+  position: relative;
+
+  &::after {
+    content: "";
+
+    position: absolute;
+    right: calc($container-margin * -1);
+    left: calc($container-margin * -1);
+
+    height: 100%;
+
+    background: $bg;
+  }
+}

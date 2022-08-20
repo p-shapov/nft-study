@@ -1,0 +1,31 @@
+.icon {
+  $duration: 1s;
+  $tick-count: 8;
+
+  line {
+    animation-name: fade-in-out;
+    animation-duration: $duration;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+    @for $i from 1 to calc($tick-count + 1) {
+      &:nth-child(#{$i}) {
+        animation-delay: calc(calc($duration / $tick-count) * $i);
+      }
+    }
+  }
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
