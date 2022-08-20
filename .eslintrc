@@ -14,7 +14,48 @@
   "rules": {
     "import/order": [
       "error",
-      { "groups": ["builtin", "external", "index", "sibling", "parent"], "newlines-between": "always" }
+      {
+        "groups": ["builtin", "external", "internal", ["parent", "sibling", "index"]],
+        "pathGroups": [
+          {
+            "pattern": "api/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "assets/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "components/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "containers/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "pages/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "services/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "shared/**",
+            "group": "parent",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["services"],
+        "newlines-between": "always"
+      }
     ],
     "import/no-unresolved": ["off"],
     "max-len": [
@@ -51,7 +92,7 @@
       }
     ],
     "prettier/prettier": [
-      "error", 
+      "error",
       {
         "endOfLine": "auto"
       }
