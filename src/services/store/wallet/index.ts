@@ -33,6 +33,8 @@ export class Wallet {
 
   public async connect(connector: Connector) {
     try {
+      if (this.connector) throw new Error('Already connected');
+
       this.setState({ status: 'connecting', error: null });
 
       const { account, chain } = await connector.connect();
@@ -44,14 +46,16 @@ export class Wallet {
   }
 
   public async disconnect() {
-    if (this.connector) {
-      try {
-        await this.connector.disconnect();
+    try {
+      if (!this.connector) throw new Error('No active connection');
 
-        runInAction(this.handleDisconnect);
-      } catch (err) {
-        this.handleError(err);
-      }
+      this.setState({ error: null });
+
+      await this.connector.disconnect();
+
+      runInAction(this.handleDisconnect);
+    } catch (err) {
+      this.handleError(err);
     }
   }
 
@@ -65,6 +69,16 @@ export class Wallet {
       connect: action.bound,
       disconnect: action.bound,
     });
+    this.initConnector();
+  }
+
+  private initConnector() {
+    client.subscribe(
+      ({ connector }) => connector,
+      (connector) => {
+        if (connector) this.connect(connector);
+      },
+    );
   }
 
   private subscribeTo(connector: Connector) {
