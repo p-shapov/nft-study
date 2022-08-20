@@ -1,9 +1,11 @@
 const { CracoAliasPlugin } = require('react-app-alias');
 const SassResourcesLoader = require('craco-sass-resources-loader');
+const { addPlugins } = require('@craco/craco');
+const webpack = require('webpack');
 
 module.exports = {
   webpack: {
-    configure: configureCSSModules,
+    configure: (config) => configurePolyfills(configureCSSModules(config)),
   },
   plugins: [
     {
@@ -26,6 +28,21 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
+
+function configurePolyfills(webpackConfig) {
+  webpackConfig.resolve.fallback = {
+    ...webpackConfig.resolve.fallback,
+    buffer: require.resolve('buffer/'),
+  };
+
+  addPlugins(webpackConfig, [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ]);
+
+  return webpackConfig;
+}
 
 function configureCSSModules(webpackConfig) {
   webpackConfig.module.rules = webpackConfig.module.rules.map((rule) => {
