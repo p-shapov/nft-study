@@ -8,6 +8,8 @@ import { useWallet } from 'services/ethereum';
 
 import { Modals } from 'shared/constants';
 
+import styles from './module.scss';
+
 export const ConnectButton: FC = observer(() => {
   const pushModal = useModal(({ push }) => push);
   const { isConnected, account, disconnect } = useWallet(({ status, account, disconnect }) => ({
@@ -20,8 +22,20 @@ export const ConnectButton: FC = observer(() => {
   const handleConnect = () => pushModal(Modals.WALLET);
 
   return (
-    <Button onClick={!isConnected ? handleConnect : handleDisconnect} inverse={isConnected} shrink>
-      {isConnected && `${(account || 'Error').slice(0, 6)}...${(account || 'Error').slice(-5, -1)}`}
+    <Button
+      onClick={!isConnected ? handleConnect : handleDisconnect}
+      inverse={isConnected}
+      withSpinner={isConnected}
+      shrink
+    >
+      {isConnected && (
+        <>
+          <span>
+            {(account || 'Error').slice(0, 6)}...{(account || 'Error').slice(-5, -1)}
+          </span>
+          <span className={styles['uppercase']}>Disconnect</span>
+        </>
+      )}
       {!isConnected && 'Connect wallet'}
     </Button>
   );

@@ -15,6 +15,25 @@
   &--shrink {
     width: max-content;
   }
+
+  &--with-spinner {
+    overflow: hidden;
+
+    .text {
+      display: grid;
+      grid-template-rows: repeat(2, 100%);
+      align-items: center;
+      justify-items: center;
+
+      transition: transform 0.3s ease-in-out;
+    }
+
+    &:hover, &:focus {
+      & .text {
+        transform: translateY(-100%); 
+      }
+    }
+  }
 }
 
 .text,

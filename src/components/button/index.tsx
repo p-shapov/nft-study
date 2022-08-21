@@ -10,6 +10,7 @@ export type Props = {
   inverse?: boolean;
   uppercase?: boolean;
   shrink?: boolean;
+  withSpinner?: boolean;
   onClick(): void;
 };
 
@@ -20,6 +21,7 @@ export const Button: FC<Props> = ({
   inverse,
   uppercase,
   shrink,
+  withSpinner,
   onClick,
 }) => (
   <button
@@ -29,6 +31,7 @@ export const Button: FC<Props> = ({
       inverse && styles['button--inverse'],
       uppercase && styles['button--uppercase'],
       shrink && styles['button--shrink'],
+      withSpinner && styles['button--with-spinner'],
     )}
     onClick={onClick}
   >
