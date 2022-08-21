@@ -17,3 +17,7 @@ export enum Errors {
   WAGMI_CONNECTOR_NOT_FOUND_ERROR = 'ConnectorNotFoundError',
   WAGMI_USER_REJECTED_ERROR = 'UserRejectedRequestError',
 }
+
+export enum LocalStorageKeys {
+  WAGMI_INJECTED_SHIM_DISCONNECT = 'wagmi.injected.shimDisconnect',
+}

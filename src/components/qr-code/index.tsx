@@ -16,7 +16,6 @@ export const QRCode: FC<Props> = ({ value, src }) => (
         logoImage={src}
         size={500}
         qrStyle="dots"
-        ecLevel="H"
         eyeRadius={5}
         removeQrCodeBehindLogo
       />

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export const useInterval = (cb: () => void, ms: number | null) => {
+export const useInterval = (cb: () => void, ms: number | null, deps: Array<unknown> = []) => {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
@@ -11,5 +11,5 @@ export const useInterval = (cb: () => void, ms: number | null) => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [ms]); // eslint-disable-line
+  }, [ms, ...deps]); // eslint-disable-line
 };

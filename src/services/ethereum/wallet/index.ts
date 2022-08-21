@@ -6,6 +6,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { publicProvider } from 'wagmi/providers/public';
 
 import { SetNonNullable } from 'shared/types';
+import { LocalStorageKeys } from 'shared/constants';
 
 import { WalletChain, WalletStatus } from './types';
 import {
@@ -31,6 +32,7 @@ const client = createClient({
 export class Wallet {
   public readonly connectors = client.connectors;
 
+  public isReady = !localStorage.getItem(LocalStorageKeys.WAGMI_INJECTED_SHIM_DISCONNECT);
   public account: string | null = null;
   public chain: WalletChain | null = null;
   public connector: Connector | null = null;
@@ -76,6 +78,7 @@ export class Wallet {
 
   constructor() {
     makeAutoObservable(this, {
+      isReady: observable.ref,
       account: observable.ref,
       chain: observable.ref,
       connector: observable.ref,
@@ -92,8 +95,12 @@ export class Wallet {
   private initConnector() {
     client.subscribe(
       ({ connector }) => connector,
-      (connector) => {
-        if (connector) this.connect(connector);
+      async (connector) => {
+        if (connector) await this.connect(connector);
+
+        runInAction(() => {
+          this.isReady = true;
+        });
       },
     );
   }

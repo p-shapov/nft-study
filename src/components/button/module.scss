@@ -3,6 +3,18 @@
 
   display: grid;
   align-items: center;
+
+  &--inverse {
+    @include control-inverse
+  }
+
+  &--uppercase {
+    text-transform: uppercase;
+  }
+
+  &--shrink {
+    width: max-content;
+  }
 }
 
 .text,
@@ -13,8 +25,6 @@
 
 .text {
   justify-self: center;
-  
-  text-transform: uppercase;
 }
 
 .icon {

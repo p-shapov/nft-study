@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export const useTimeout = (cb: () => void, ms: number | null) => {
+export const useTimeout = (cb: () => void, ms: number | null, deps: Array<unknown> = []) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
@@ -11,5 +11,5 @@ export const useTimeout = (cb: () => void, ms: number | null) => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [ms]); // eslint-disable-line
+  }, [ms, ...deps]); // eslint-disable-line
 };

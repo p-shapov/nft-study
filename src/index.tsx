@@ -6,10 +6,10 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import { ModalMediator } from 'containers/modal-mediator';
-import { Header } from 'containers/header';
+import { ReadyCheck } from 'containers/ready-check';
 
-import { EthereumProvider } from 'services/ethereum';
 import { UIProvider } from 'services/ui';
+import { EthereumProvider } from 'services/ethereum';
 
 import { App } from './app';
 
@@ -19,8 +19,9 @@ root.render(
     <EthereumProvider>
       <UIProvider>
         <BrowserRouter>
-          <Header />
-          <App />
+          <ReadyCheck>
+            <App />
+          </ReadyCheck>
           <ModalMediator />
         </BrowserRouter>
       </UIProvider>
