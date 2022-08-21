@@ -1,5 +1,5 @@
 import { Wallet } from './wallet';
 
-export type Store = {
+export type Ethereum = {
   wallet: Wallet;
 };

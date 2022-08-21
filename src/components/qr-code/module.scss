@@ -1,0 +1,15 @@
+.wrapper {
+  @include aspect-ratio;
+}
+
+.code {
+  padding: 10px;
+
+  border: 1px solid $primary-color;
+  border-radius: 5px;
+
+  & > * {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}

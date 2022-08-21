@@ -2,13 +2,18 @@
   $duration: 1s;
   $tick-count: 8;
 
+  display: grid;
+  
+  width: 100%;
+  height: 100%;
+
   line {
     animation-name: fade-in-out;
     animation-duration: $duration;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 
-    @for $i from 1 to calc($tick-count + 1) {
+    @for $i from 1 to $tick-count + 1 {
       &:nth-child(#{$i}) {
         animation-delay: calc(calc($duration / $tick-count) * $i);
       }

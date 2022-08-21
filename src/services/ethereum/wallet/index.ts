@@ -8,6 +8,12 @@ import { publicProvider } from 'wagmi/providers/public';
 import { SetNonNullable } from 'shared/types';
 
 import { WalletChain, WalletStatus } from './types';
+import {
+  WalletAlreadyConnectedError,
+  WalletConnectionError,
+  WalletNoActiveConnectionError,
+  WalletQrDoesNotExistError,
+} from './errors';
 
 const { chains, provider, webSocketProvider } = configureChains([chain.goerli], [publicProvider()]);
 
@@ -15,8 +21,8 @@ const client = createClient({
   autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({ chains, options: { appName: 'nft-study' } }),
-    new WalletConnectConnector({ chains, options: { qrcode: true } }),
+    new CoinbaseWalletConnector({ chains, options: { appName: 'nft-study', headlessMode: true } }),
+    new WalletConnectConnector({ chains, options: { qrcode: false } }),
   ],
   provider,
   webSocketProvider,
@@ -28,18 +34,23 @@ export class Wallet {
   public account: string | null = null;
   public chain: WalletChain | null = null;
   public connector: Connector | null = null;
-  public error: string | null = null;
+  public error: Error | null = null;
   public status: WalletStatus = 'disconnected';
+  public qrUrl: string | null = null;
 
   public async connect(connector: Connector) {
     try {
-      if (this.connector) throw new Error('Already connected');
+      if (this.connector && this.connector !== connector) throw new WalletAlreadyConnectedError();
 
-      this.setState({ status: 'connecting', error: null });
+      this.setState({ connector, status: 'connecting', error: null });
+
+      const qrUrl = await this.getQrCodeFrom(connector);
+
+      runInAction(() => this.setState({ qrUrl }));
 
       const { account, chain } = await connector.connect();
 
-      runInAction(() => this.handleConnect({ account, chain, connector }));
+      runInAction(() => this.handleConnect({ account, chain }));
     } catch (err) {
       this.handleError(err);
     }
@@ -47,7 +58,7 @@ export class Wallet {
 
   public async disconnect() {
     try {
-      if (!this.connector) throw new Error('No active connection');
+      if (!this.connector) throw new WalletNoActiveConnectionError();
 
       this.setState({ error: null });
 
@@ -59,6 +70,10 @@ export class Wallet {
     }
   }
 
+  public async discard() {
+    this.setState({ status: 'disconnected', connector: null, qrUrl: null, error: null });
+  }
+
   constructor() {
     makeAutoObservable(this, {
       account: observable.ref,
@@ -66,8 +81,10 @@ export class Wallet {
       connector: observable.ref,
       error: observable.ref,
       status: observable.ref,
+      qrUrl: observable.ref,
       connect: action.bound,
       disconnect: action.bound,
+      discard: action.bound,
     });
     this.initConnector();
   }
@@ -97,12 +114,14 @@ export class Wallet {
     connector,
     status,
     error,
-  }: Partial<Pick<Wallet, 'account' | 'chain' | 'connector' | 'status' | 'error'>>) {
+    qrUrl,
+  }: Partial<Pick<Wallet, 'account' | 'chain' | 'connector' | 'error' | 'status' | 'qrUrl'>>) {
     account !== undefined && (this.account = account);
     chain !== undefined && (this.chain = chain);
     connector !== undefined && (this.connector = connector);
     status !== undefined && (this.status = status);
     error !== undefined && (this.error = error);
+    qrUrl !== undefined && (this.qrUrl = qrUrl);
   }
 
   private handleChange = ({ account, chain }: Partial<Pick<Wallet, 'account' | 'chain'>>) => {
@@ -112,16 +131,11 @@ export class Wallet {
     });
   };
 
-  private handleConnect = ({
-    account,
-    chain,
-    connector,
-  }: SetNonNullable<Pick<Wallet, 'account' | 'chain' | 'connector'>>) => {
-    this.subscribeTo(connector);
+  private handleConnect = ({ account, chain }: SetNonNullable<Pick<Wallet, 'account' | 'chain'>>) => {
+    if (this.connector) this.subscribeTo(this.connector);
     this.setState({
       account,
       chain,
-      connector,
       status: 'connected',
     });
   };
@@ -132,14 +146,35 @@ export class Wallet {
       account: null,
       chain: null,
       connector: null,
+      qrUrl: null,
       status: 'disconnected',
     });
   };
 
-  private handleError = (err: unknown) => {
+  private handleError = (error: unknown) => {
     this.setState({
-      error: err instanceof Error ? err.message : 'Connection error',
+      error: error instanceof Error ? error : new WalletConnectionError(),
       status: this.status === 'connecting' ? 'disconnected' : undefined,
     });
+  };
+
+  private getQrCodeFrom = async (connector: Connector) => {
+    if (connector instanceof WalletConnectConnector) {
+      const {
+        connector: { uri },
+      } = await connector.getProvider();
+
+      return uri;
+    }
+
+    if (connector instanceof CoinbaseWalletConnector) {
+      const { qrUrl } = await connector.getProvider();
+
+      if (!qrUrl) throw new WalletQrDoesNotExistError();
+
+      return qrUrl;
+    }
+
+    return null;
   };
 }

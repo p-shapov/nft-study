@@ -20,5 +20,10 @@
 .icon {
   justify-self: end;
 
+  display: flex;
+
+  width: 20px;
+  height: 20px;
+
   transition: color .1s ease-in-out;
 }

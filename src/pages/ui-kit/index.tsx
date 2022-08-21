@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 
 import { Button } from 'components/button';
-import { Loader } from 'components/loader';
+import { LoaderCircle } from 'components/loader-circle';
 import { Input } from 'components/input';
 
 import styles from './module.scss';
@@ -14,7 +14,7 @@ export const UiKit: FC = () => {
     <div className={styles['container']}>
       <div className={styles['layout']}>
         <Button onClick={() => null}>Button</Button>
-        <Button onClick={() => null} icon={<Loader />}>
+        <Button onClick={() => null} icon={<LoaderCircle />}>
           Button
         </Button>
 
