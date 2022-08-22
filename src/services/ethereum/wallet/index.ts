@@ -1,7 +1,8 @@
-import { action, makeAutoObservable, observable, runInAction } from 'mobx';
+import { action, flow, makeAutoObservable, observable } from 'mobx';
 import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
 import { WalletConnect } from '@web3-react/walletconnect';
 import { MetaMask } from '@web3-react/metamask';
+import { CancellablePromise } from 'mobx/dist/internal';
 
 import { LOCAL_STORAGE_KEY, WALLET_CONNECTOR_ID } from 'shared/constants';
 import { provideError } from 'shared/utils/provideError';
@@ -24,48 +25,48 @@ export class Wallet {
   public status: WalletStatus = 'disconnected';
   public error: Error | null = null;
 
-  public async connect(connectorId: WalletConnectorID) {
+  public readonly connect = flow(function* (this: Wallet, connectorId: WalletConnectorID) {
     const connector = this.connectors[connectorId].instance;
 
     this.setState({ connector, provider: connector.provider, status: 'connecting', error: null });
 
     try {
-      await connector.activate();
+      this.connectPromise = yield connector.activate();
 
-      runInAction(() => this.setState({ status: 'connected' }));
+      this.setState({ status: 'connected' });
 
       localStorage.setItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR, connectorId);
     } catch (error) {
       this.handleError(error);
       this.setState({ connector: null, provider: null, status: 'disconnected' });
     }
-  }
+  });
 
-  public async disconnect() {
+  public readonly disconnect = flow(function* (this: Wallet) {
     try {
       this.setState({ error: null });
 
-      await this.connector?.deactivate?.();
+      this.disconnectPromise = yield this.connector?.deactivate?.();
 
-      runInAction(() =>
-        this.setState({
-          connector: null,
-          provider: null,
-          account: null,
-          chainId: null,
-          status: 'disconnected',
-        }),
-      );
+      this.setState({
+        connector: null,
+        provider: null,
+        account: null,
+        chainId: null,
+        status: 'disconnected',
+      });
 
       localStorage.removeItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR);
     } catch (error) {
       this.handleError(error);
     }
-  }
+  });
 
-  public async reject() {
+  public readonly reject = () => {
+    this.connectPromise?.cancel();
+    this.disconnectPromise?.cancel();
     this.setState({ connector: null, provider: null, status: 'disconnected' });
-  }
+  };
 
   constructor() {
     makeAutoObservable(this, {
@@ -75,37 +76,23 @@ export class Wallet {
       chainId: observable.ref,
       status: observable.ref,
       error: observable.ref,
-      connect: action.bound,
-      disconnect: action.bound,
+      connect: flow.bound,
+      disconnect: flow.bound,
       reject: action.bound,
     });
     this.initWallet();
   }
 
-  private setState({
-    connector,
-    provider,
-    account,
-    chainId,
-    status,
-    error,
-  }: Partial<Omit<Wallet, 'connect' | 'disconnect' | 'reject' | 'connectors'>>) {
-    connector !== undefined && (this.connector = connector);
-    provider !== undefined && (this.provider = provider);
-    account !== undefined && (this.account = account);
-    chainId !== undefined && (this.chainId = chainId);
-    status !== undefined && (this.status = status);
-    error !== undefined && (this.error = error);
-  }
+  private connectPromise: CancellablePromise<unknown> | null = null;
+  private disconnectPromise: CancellablePromise<unknown> | null = null;
 
   private handleUpdate = ({ accounts, chainId }: { accounts?: Array<string>; chainId?: number }) => {
-    runInAction(() =>
-      !!accounts?.length ? this.setState({ account: accounts[0], chainId }) : this.disconnect(),
-    );
+    if (!!accounts?.length) this.setState({ account: accounts[0], chainId });
+    else this.disconnect();
   };
 
   private handleError = (error: unknown) => {
-    if (error instanceof Error) runInAction(() => this.setState({ error }));
+    if (error instanceof Error) this.setState({ error });
   };
 
   private initWallet() {
@@ -142,4 +129,20 @@ export class Wallet {
       instance: new WalletConnect(this.actions, { qrcode: false }, true),
     },
   };
+
+  private setState({
+    connector,
+    provider,
+    account,
+    chainId,
+    status,
+    error,
+  }: Partial<Omit<Wallet, 'connect' | 'disconnect' | 'reject' | 'connectors'>>) {
+    connector !== undefined && (this.connector = connector);
+    provider !== undefined && (this.provider = provider);
+    account !== undefined && (this.account = account);
+    chainId !== undefined && (this.chainId = chainId);
+    status !== undefined && (this.status = status);
+    error !== undefined && (this.error = error);
+  }
 }
