@@ -63,8 +63,8 @@ export class Wallet {
     }
   }
 
-  public async reject(connectorId: WalletConnectorID) {
-    // todo :: reject connection;
+  public async reject() {
+    this.setState({ connector: null, provider: null, status: 'disconnected' });
   }
 
   constructor() {

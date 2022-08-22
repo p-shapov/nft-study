@@ -20,13 +20,11 @@ export const Connection: FC<Props> = observer(({ id, children }) => {
   const {
     connect,
     hasError,
-    errorName = '',
     errorMessage = '',
   } = useWallet(({ error, connector, connect }) => ({
-    connector,
     connect,
+    connector,
     hasError: !!error,
-    errorName: error?.name,
     errorMessage: error?.message,
   }));
 
@@ -49,7 +47,7 @@ export const Connection: FC<Props> = observer(({ id, children }) => {
           <span className={styles['error']}>{errorMessage}</span>
         </div>
       )}
-      {hasError && errorName && (
+      {hasError && (
         <div className={styles['retry']}>
           <IconButton onClick={handleRetry}>{ico_refresh}</IconButton>
         </div>
