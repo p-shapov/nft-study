@@ -20,9 +20,8 @@ export type Props = {
 };
 
 export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => {
-  const { isConnected, discard } = useWallet(({ status, discard }) => ({
+  const { isConnected } = useWallet(({ status }) => ({
     isConnected: status === 'connected',
-    discard,
   }));
   const { pop: popModal, clear: closeAllModals } = useModal(({ pop, clear }) => ({ pop, clear }));
 
@@ -33,12 +32,10 @@ export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => 
 
   const handleBack = () => {
     popModal();
-    discard();
   };
 
   const handleClose = () => {
     closeAllModals();
-    if (!isConnected) discard();
   };
 
   return (

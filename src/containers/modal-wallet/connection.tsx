@@ -7,18 +7,17 @@ import { IconButton } from 'components/icon-button';
 import { LoaderLine } from 'components/loader-line';
 
 import { useWallet } from 'services/ethereum';
-
-import { Errors } from 'shared/constants';
+import { WalletConnectorID } from 'services/ethereum/wallet';
 
 import styles from './module.scss';
 
 export type Props = {
+  id: WalletConnectorID;
   children: ReactNode;
 };
 
-export const Connection: FC<Props> = observer(({ children }) => {
+export const Connection: FC<Props> = observer(({ id, children }) => {
   const {
-    connector,
     connect,
     hasError,
     errorName = '',
@@ -31,9 +30,7 @@ export const Connection: FC<Props> = observer(({ children }) => {
     errorMessage: error?.message,
   }));
 
-  const handleRetry = () => {
-    if (connector) connect(connector);
-  };
+  const handleRetry = () => connect(id);
 
   return (
     <>
@@ -52,7 +49,7 @@ export const Connection: FC<Props> = observer(({ children }) => {
           <span className={styles['error']}>{errorMessage}</span>
         </div>
       )}
-      {hasError && errorName === Errors.WAGMI_USER_REJECTED_ERROR && (
+      {hasError && errorName && (
         <div className={styles['retry']}>
           <IconButton onClick={handleRetry}>{ico_refresh}</IconButton>
         </div>

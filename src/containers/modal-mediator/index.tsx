@@ -5,13 +5,13 @@ import { ModalCoinbase, ModalMetamask, ModalWalletConnect, ModalConnect } from '
 
 import { useModal } from 'services/ui';
 
-import { Modals, WalletIDs } from 'shared/constants';
+import { MODAL_KEY } from 'shared/constants';
 
 const modals: Record<string, ReactElement> = {
-  [Modals.WALLET]: <ModalConnect />,
-  [WalletIDs.METAMASK]: <ModalMetamask />,
-  [WalletIDs.COINBASE]: <ModalCoinbase />,
-  [WalletIDs.WALLET_CONNECT]: <ModalWalletConnect />,
+  [MODAL_KEY.WALLET]: <ModalConnect />,
+  [MODAL_KEY.METAMASK]: <ModalMetamask />,
+  [MODAL_KEY.COINBASE]: <ModalCoinbase />,
+  [MODAL_KEY.WALLET_CONNECT]: <ModalWalletConnect />,
 };
 
 export const ModalMediator = observer(() => {

@@ -1,187 +1,145 @@
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
-import { configureChains, Connector, createClient, chain } from 'wagmi';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { publicProvider } from 'wagmi/providers/public';
+import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
+import { WalletConnect } from '@web3-react/walletconnect';
+import { MetaMask } from '@web3-react/metamask';
 
-import { SetNonNullable } from 'shared/types';
-import { LocalStorageKeys } from 'shared/constants';
+import { LOCAL_STORAGE_KEY, WALLET_CONNECTOR_ID } from 'shared/constants';
+import { provideError } from 'shared/utils/provideError';
 
-import { WalletChain, WalletStatus } from './types';
-import {
-  WalletAlreadyConnectedError,
-  WalletConnectionError,
-  WalletNoActiveConnectionError,
-  WalletQrDoesNotExistError,
-} from './errors';
+export type WalletStatus = 'connected' | 'disconnected' | 'connecting';
 
-const { chains, provider, webSocketProvider } = configureChains([chain.goerli], [publicProvider()]);
+export type WalletConnectorID = typeof WALLET_CONNECTOR_ID[keyof typeof WALLET_CONNECTOR_ID];
 
-const client = createClient({
-  autoConnect: true,
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({ chains, options: { appName: 'nft-study', headlessMode: true } }),
-    new WalletConnectConnector({ chains, options: { qrcode: false } }),
-  ],
-  provider,
-  webSocketProvider,
-});
+export type WalletConnector = CoinbaseWallet | WalletConnect | MetaMask;
 
 export class Wallet {
-  public readonly connectors = client.connectors;
+  public get connectors() {
+    return this._connectors;
+  }
 
-  public isReady = !localStorage.getItem(LocalStorageKeys.WAGMI_INJECTED_SHIM_DISCONNECT);
+  public connector: WalletConnector | null = null;
+  public provider: NonNullable<WalletConnector['provider']> | null = null;
   public account: string | null = null;
-  public chain: WalletChain | null = null;
-  public connector: Connector | null = null;
-  public error: Error | null = null;
+  public chainId: number | null = null;
   public status: WalletStatus = 'disconnected';
-  public qrUrl: string | null = null;
+  public error: Error | null = null;
 
-  public async connect(connector: Connector) {
+  public async connect(connectorId: WalletConnectorID) {
+    const connector = this.connectors[connectorId].instance;
+
+    this.setState({ connector, provider: connector.provider, status: 'connecting', error: null });
+
     try {
-      if (this.connector && this.connector !== connector) throw new WalletAlreadyConnectedError();
+      await connector.activate();
 
-      this.setState({ connector, status: 'connecting', error: null });
+      runInAction(() => this.setState({ status: 'connected' }));
 
-      const qrUrl = await this.getQrCodeFrom(connector);
-
-      runInAction(() => this.setState({ qrUrl }));
-
-      const { account, chain } = await connector.connect();
-
-      runInAction(() => this.handleConnect({ account, chain }));
-    } catch (err) {
-      this.handleError(err);
+      localStorage.setItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR, connectorId);
+    } catch (error) {
+      this.handleError(error);
+      this.setState({ connector: null, provider: null, status: 'disconnected' });
     }
   }
 
   public async disconnect() {
     try {
-      if (!this.connector) throw new WalletNoActiveConnectionError();
-
       this.setState({ error: null });
 
-      await this.connector.disconnect();
+      await this.connector?.deactivate?.();
 
-      runInAction(this.handleDisconnect);
-    } catch (err) {
-      this.handleError(err);
+      runInAction(() =>
+        this.setState({
+          connector: null,
+          provider: null,
+          account: null,
+          chainId: null,
+          status: 'disconnected',
+        }),
+      );
+
+      localStorage.removeItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR);
+    } catch (error) {
+      this.handleError(error);
     }
   }
 
-  public async discard() {
-    this.setState({ status: 'disconnected', connector: null, qrUrl: null, error: null });
+  public async reject(connectorId: WalletConnectorID) {
+    // todo :: reject connection;
   }
 
   constructor() {
     makeAutoObservable(this, {
-      isReady: observable.ref,
-      account: observable.ref,
-      chain: observable.ref,
       connector: observable.ref,
-      error: observable.ref,
+      provider: observable.ref,
+      account: observable.ref,
+      chainId: observable.ref,
       status: observable.ref,
-      qrUrl: observable.ref,
+      error: observable.ref,
       connect: action.bound,
       disconnect: action.bound,
-      discard: action.bound,
+      reject: action.bound,
     });
-    this.initConnector();
-  }
-
-  private initConnector() {
-    client.subscribe(
-      ({ connector }) => connector,
-      async (connector) => {
-        if (connector) await this.connect(connector);
-
-        runInAction(() => {
-          this.isReady = true;
-        });
-      },
-    );
-  }
-
-  private subscribeTo(connector: Connector) {
-    connector.on('change', this.handleChange);
-    connector.on('disconnect', this.handleDisconnect);
-  }
-
-  private unsubscribeFrom(connector: Connector) {
-    connector.off('change', this.handleChange);
-    connector.off('disconnect', this.handleDisconnect);
+    this.initWallet();
   }
 
   private setState({
-    account,
-    chain,
     connector,
+    provider,
+    account,
+    chainId,
     status,
     error,
-    qrUrl,
-  }: Partial<Pick<Wallet, 'account' | 'chain' | 'connector' | 'error' | 'status' | 'qrUrl'>>) {
-    account !== undefined && (this.account = account);
-    chain !== undefined && (this.chain = chain);
+  }: Partial<Omit<Wallet, 'connect' | 'disconnect' | 'reject' | 'connectors'>>) {
     connector !== undefined && (this.connector = connector);
+    provider !== undefined && (this.provider = provider);
+    account !== undefined && (this.account = account);
+    chainId !== undefined && (this.chainId = chainId);
     status !== undefined && (this.status = status);
     error !== undefined && (this.error = error);
-    qrUrl !== undefined && (this.qrUrl = qrUrl);
   }
 
-  private handleChange = ({ account, chain }: Partial<Pick<Wallet, 'account' | 'chain'>>) => {
-    this.setState({
-      account,
-      chain,
-    });
-  };
-
-  private handleConnect = ({ account, chain }: SetNonNullable<Pick<Wallet, 'account' | 'chain'>>) => {
-    if (this.connector) this.subscribeTo(this.connector);
-    this.setState({
-      account,
-      chain,
-      status: 'connected',
-    });
-  };
-
-  private handleDisconnect = () => {
-    if (this.connector) this.unsubscribeFrom(this.connector);
-    this.setState({
-      account: null,
-      chain: null,
-      connector: null,
-      qrUrl: null,
-      status: 'disconnected',
-    });
+  private handleUpdate = ({ accounts, chainId }: { accounts?: Array<string>; chainId?: number }) => {
+    runInAction(() =>
+      !!accounts?.length ? this.setState({ account: accounts[0], chainId }) : this.disconnect(),
+    );
   };
 
   private handleError = (error: unknown) => {
-    this.setState({
-      error: error instanceof Error ? error : new WalletConnectionError(),
-      status: this.status === 'connecting' ? 'disconnected' : undefined,
-    });
+    if (error instanceof Error) runInAction(() => this.setState({ error }));
   };
 
-  private getQrCodeFrom = async (connector: Connector) => {
-    if (connector instanceof WalletConnectConnector) {
-      const {
-        connector: { uri },
-      } = await connector.getProvider();
+  private initWallet() {
+    const connectorId = localStorage.getItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR);
 
-      return uri;
-    }
+    if (connectorId) this.connect(connectorId as WalletConnectorID);
+  }
 
-    if (connector instanceof CoinbaseWalletConnector) {
-      const { qrUrl } = await connector.getProvider();
+  private actions = {
+    startActivation: () => () => null,
+    update: this.handleUpdate,
+    reportError: provideError,
+  };
 
-      if (!qrUrl) throw new WalletQrDoesNotExistError();
-
-      return qrUrl;
-    }
-
-    return null;
+  private readonly _connectors: Record<WalletConnectorID, { name: string; instance: WalletConnector }> = {
+    [WALLET_CONNECTOR_ID.METAMASK]: {
+      name: 'MetaMask',
+      instance: new MetaMask(this.actions, false, { mustBeMetaMask: true }),
+    },
+    [WALLET_CONNECTOR_ID.COINBASE]: {
+      name: 'Coinbase',
+      instance: new CoinbaseWallet(
+        this.actions,
+        {
+          appName: 'nft-study',
+          headlessMode: true,
+          url: '',
+        },
+        true,
+      ),
+    },
+    [WALLET_CONNECTOR_ID.WALLET_CONNECT]: {
+      name: 'WalletConnect',
+      instance: new WalletConnect(this.actions, { qrcode: false }, true),
+    },
   };
 }

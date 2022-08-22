@@ -1,23 +1,14 @@
-export enum WalletIDs {
-  METAMASK = 'metaMask',
-  COINBASE = 'coinbaseWallet',
-  WALLET_CONNECT = 'walletConnect',
-}
+export const WALLET_CONNECTOR_ID = {
+  METAMASK: 'metamask_wallet',
+  COINBASE: 'coinbase_wallet',
+  WALLET_CONNECT: 'walletConnect_wallet',
+} as const;
 
-export enum Modals {
-  WALLET = 'wallet',
-}
+export const MODAL_KEY = {
+  WALLET: 'wallet',
+  ...WALLET_CONNECTOR_ID,
+} as const;
 
-export enum Errors {
-  WALLET_CONNECTION_ERROR = 'WalletConnectionError',
-  WALLET_NO_ACTIVE_CONNECTION_ERROR = 'WalletNoActiveConnectionError',
-  WALLET_QR_CODE_DOES_NOT_EXIST_ERROR = 'WalletQrDoesNotExistError',
-  WALLET_ALREADY_CONNECTED_ERROR = 'WalletAlreadyConnectedError',
-
-  WAGMI_CONNECTOR_NOT_FOUND_ERROR = 'ConnectorNotFoundError',
-  WAGMI_USER_REJECTED_ERROR = 'UserRejectedRequestError',
-}
-
-export enum LocalStorageKeys {
-  WAGMI_INJECTED_SHIM_DISCONNECT = 'wagmi.injected.shimDisconnect',
-}
+export const LOCAL_STORAGE_KEY = {
+  WALLET_CONNECTOR: 'wallet_connector',
+} as const;
