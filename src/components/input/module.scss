@@ -6,7 +6,7 @@
   max-width: $control-max-width;
 
   &--theme_error {
-    & .field {
+    .field {
       color: $error-color;
       --input-br-color: #{$error-color};
     }

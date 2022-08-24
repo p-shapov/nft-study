@@ -12,3 +12,5 @@ export const MODAL_KEY = {
 export const LOCAL_STORAGE_KEY = {
   WALLET_CONNECTOR: 'wallet_connector',
 } as const;
+
+export const SUPPORTED_CHAIN_ID = 5;

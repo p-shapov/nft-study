@@ -20,10 +20,7 @@ export type Props = {
 };
 
 export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => {
-  const { reject, isConnected } = useWallet(({ status, reject }) => ({
-    reject,
-    isConnected: status === 'connected',
-  }));
+  const isConnected = useWallet(({ status }) => status === 'connected');
   const { pop: popModal, clear: closeAllModals } = useModal(({ pop, clear }) => ({ pop, clear }));
 
   useEffect(() => {
@@ -31,15 +28,9 @@ export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
 
-  const handleBack = () => {
-    reject();
-    popModal();
-  };
+  const handleBack = () => popModal();
 
-  const handleClose = () => {
-    reject();
-    closeAllModals();
-  };
+  const handleClose = () => closeAllModals();
 
   return (
     <Modal className={cn(styles['wrapper'], isRoot && styles['wrapper--is_root'])}>

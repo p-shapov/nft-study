@@ -1,7 +1,7 @@
 @mixin aspect-ratio($w: 1, $h: 1) {
   display: grid;
 
-  & > * {
+  > * {
     grid-column: 1;
     grid-row: 1;
     width: 100%;
@@ -112,10 +112,15 @@
   }
 }
 
+@mixin border {
+  border: 1px solid $br-color;
+  box-shadow: -2px 2px 0 0 $br-color;
+}
+
 @mixin card($br-color: #{$primary-color}) {
   border: 1px solid $br-color;
   border-radius: 6px;
-  box-shadow: -2px 2px 0 0 $br-color;
+  box-shadow: -2px 2px 5px 0 $br-color;
 }
 
 @mixin control($br-color: #{$primary-color}, $bg-color: #{$secondary-color}) {
@@ -136,7 +141,7 @@
 
   &:hover, 
   &:focus-visible {
-    box-shadow: -2px 2px 0 0 $br-color;
+    box-shadow: -2px 2px 5px 0 $br-color;
 
     .icon {
       color: $accent-color;
@@ -153,7 +158,7 @@
   background-color: $bg-color;
   border: 1px solid $br-color;
   border-radius: 3px;
-  box-shadow: -2px 2px 0 0 $br-color;
+  box-shadow: -2px 2px 5px 0 $br-color;
 
   font-size: 16px;
 
@@ -168,4 +173,21 @@
       color: $accent-color;
     }
   }
+}
+
+@mixin flex-gap($col-gap: 0, $row-gap: 0) {
+  margin: calc(-1 * $col-gap) 0 0 calc(-1 * $row-gap);
+  width: calc(100% + $row-gap);
+
+  > * {
+    margin: $col-gap 0 0 $row-gap;
+  }
+}
+
+@mixin flex-row-gap($row-gap) {
+  @include flex-gap(0, $row-gap)
+}
+
+@mixin flex-column-gap($col-gap) {
+  @include flex-gap($col-gap)
 }

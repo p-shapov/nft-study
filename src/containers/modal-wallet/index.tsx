@@ -1,10 +1,6 @@
 import { observer } from 'mobx-react-lite';
-import { FC, ReactNode } from 'react';
-import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
-import { WalletConnect } from '@web3-react/walletconnect';
+import { FC, ReactNode, useEffect, useState } from 'react';
 
-import svg_coinbase from 'assets/icons/coinbase.svg';
-import svg_wallet_connect from 'assets/icons/wallet-connect.svg';
 import { ico_coinbase } from 'assets/icons/coinbase';
 import { ico_metamask } from 'assets/icons/metamask';
 import { ico_wallet_connect } from 'assets/icons/wallet-connect';
@@ -43,16 +39,20 @@ export const ModalConnect: FC = observer(() => {
 
   return (
     <ModalWallet title="Connect" isRoot>
-      {Object.entries(connectors).map(([id, { name }]) => (
-        <Button
-          key={id}
-          onClick={() => handleConnect(id as WalletConnectorID)}
-          icon={walletIcons[id as WalletConnectorID]}
-          uppercase
-        >
-          {name}
-        </Button>
-      ))}
+      {Object.entries(connectors).map(([id, { name }]) => {
+        const walletConnectorId = id as WalletConnectorID;
+
+        return (
+          <Button
+            key={id}
+            onClick={() => handleConnect(walletConnectorId)}
+            icon={walletIcons[walletConnectorId]}
+            uppercase
+          >
+            {name}
+          </Button>
+        );
+      })}
     </ModalWallet>
   );
 });
@@ -61,35 +61,44 @@ export const ModalMetamask: FC = observer(() => {
   return (
     <ModalWallet title="MetaMask">
       <Connection id={WALLET_CONNECTOR_ID.METAMASK}>
-        <div className={styles['metamask-logo']}>{ico_metamask}</div>
+        <div className={styles['logo']}>{ico_metamask}</div>
       </Connection>
     </ModalWallet>
   );
 });
 
 export const ModalCoinbase: FC = observer(() => {
-  const qrUrl = useWallet(({ provider }) => {
-    return (provider as CoinbaseWallet['provider'])?.qrUrl;
-  });
+  const getQrcode = useWallet(({ getQrcode }) => getQrcode);
+  const [qrcode, setQrcode] = useState<string | null>(null);
+
+  useEffect(() => {
+    getQrcode().then(setQrcode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ModalWallet title="Coinbase">
       <Connection id={WALLET_CONNECTOR_ID.COINBASE}>
-        <QRCode value={qrUrl || ''} src={svg_coinbase} />
+        {qrcode && <QRCode value={qrcode} logo={ico_coinbase} />}
+        {!qrcode && <div className={styles['logo']}>{ico_coinbase}</div>}
       </Connection>
     </ModalWallet>
   );
 });
 
 export const ModalWalletConnect: FC = observer(() => {
-  const qrUrl = useWallet(({ provider }) => {
-    return (provider as WalletConnect['provider'])?.connector.uri;
-  });
+  const getQrcode = useWallet(({ getQrcode }) => getQrcode);
+  const [qrcode, setQrcode] = useState<string | null>(null);
+
+  useEffect(() => {
+    getQrcode().then(setQrcode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ModalWallet title="Wallet Connect">
       <Connection id={WALLET_CONNECTOR_ID.WALLET_CONNECT}>
-        <QRCode value={qrUrl || ''} src={svg_wallet_connect} />
+        <QRCode value={qrcode || undefined} logo={ico_wallet_connect} />
       </Connection>
     </ModalWallet>
   );

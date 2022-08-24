@@ -9,6 +9,7 @@ import styles from './module.scss';
 
 export const Home: FC = observer(() => {
   const { status, account, chainId, error } = useWallet();
+
   return (
     <div className={styles['container']}>
       <div className={styles['layout']}>
