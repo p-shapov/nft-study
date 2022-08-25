@@ -2,7 +2,7 @@
   background-color: $bg-color;
   border: 1px solid $br-color;
   border-radius: 6px;
-  box-shadow: -2px 2px 5px 0 $br-color;
+  box-shadow: -2px 2px 2px 0 $br-color;
 }
 
 @mixin control($br-color: #{$fg-color}, $inverse-br: false) {
@@ -16,7 +16,7 @@
   border: 1px solid $br-color;
   border-radius: 3px;
   @if $inverse-br {
-    box-shadow: -2px 2px 5px 0 $br-color;
+    box-shadow: -2px 2px 2px 0 $br-color;
   } @else {  
     box-shadow: 0 0 0 0 $br-color;
   }
@@ -31,7 +31,7 @@
     @if $inverse-br {
       box-shadow: 0 0 0 0 $br-color;
     } @else {
-      box-shadow: -2px 2px 5px 0 $br-color;
+      box-shadow: -2px 2px 2px 0 $br-color;
     }
 
     .icon {

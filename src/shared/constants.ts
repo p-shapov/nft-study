@@ -18,4 +18,19 @@ export const ROUTES = {
   MINT: '/mint',
 };
 
+export const HEADER_NAV = [
+  { href: 'change/me', text: 'About' },
+  { href: 'change/me', text: 'Roadmap' },
+  { href: 'change/me', text: 'Team' },
+  { href: 'change/me', text: 'Gallery' },
+];
+
+export const FOOTER_NAV = [
+  { href: 'change/me', text: 'Instagram' },
+  { href: 'change/me', text: 'Discord' },
+  { href: 'change/me', text: 'Facebook' },
+  { href: 'change/me', text: 'Telegram' },
+  { href: 'change/me', text: 'Be' },
+];
+
 export const SUPPORTED_CHAIN_ID = 5;

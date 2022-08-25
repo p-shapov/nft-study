@@ -1,0 +1,7 @@
+.content {
+  display: grid;
+  grid-template-rows: max-content 1fr max-content;
+  row-gap: 40px;
+
+  min-height: 100vh;
+}

@@ -19,9 +19,5 @@ const Content = observer(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisconnected]);
 
-  return (
-    <div className={styles['container']}>
-      <div className={styles['layout']}>Minting page</div>
-    </div>
-  );
+  return <div className={styles['container']}></div>;
 });

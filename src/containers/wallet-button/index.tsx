@@ -10,11 +10,16 @@ import { MODAL_KEY } from 'shared/constants';
 
 import styles from './module.scss';
 
-export type Props = {
-  children?: ReactNode;
-};
+export type Props =
+  | {
+      type: 'connect';
+      children: ReactNode;
+    }
+  | {
+      type: 'disconnect';
+    };
 
-export const WalletButton: FC<Props> = observer(({ children = 'Connect wallet' }) => {
+export const WalletButton: FC<Props> = observer((props) => {
   const pushModal = useModal(({ push }) => push);
   const { isConnected, account, disconnect } = useWallet(({ status, account, disconnect }) => ({
     account,
@@ -22,30 +27,36 @@ export const WalletButton: FC<Props> = observer(({ children = 'Connect wallet' }
     isConnected: status === 'connected',
   }));
 
-  const handleDisconnect = () => {
-    disconnect();
-  };
-
-  const handleConnect = () => {
-    pushModal(MODAL_KEY.WALLET);
+  const handleClick = () => {
+    switch (props.type) {
+      case 'connect':
+        return pushModal(MODAL_KEY.WALLET);
+      case 'disconnect':
+        return disconnect();
+    }
   };
 
   return (
-    <Button
-      onClick={!isConnected ? handleConnect : handleDisconnect}
-      inverse={isConnected}
-      withSpinner={isConnected}
-      shrink
-    >
-      {isConnected && (
+    <Button onClick={handleClick} inverse={isConnected} withSpinner={isConnected} shrink>
+      {props.type === 'disconnect' && (
         <>
-          <span>
-            {(account || 'Error').slice(0, 6)}...{(account || 'Error').slice(-5, -1)}
-          </span>
+          {isConnected && (
+            <span>
+              {(account || 'Error').slice(0, 6)}...{(account || 'Error').slice(-5, -1)}
+            </span>
+          )}
           <span className={styles['uppercase']}>Disconnect</span>
         </>
       )}
-      {!isConnected && children}
+      {props.type === 'connect' && (props.children || 'Connect wallet')}
     </Button>
   );
 });
+
+export const ConnectButton: FC<{ children: ReactNode }> = (props) => (
+  <WalletButton type="connect" {...props} />
+);
+
+export const DisconnectButton: FC<Omit<Props, 'type'>> = (props) => (
+  <WalletButton type="disconnect" {...props} />
+);

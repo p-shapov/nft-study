@@ -38,6 +38,11 @@
             "position": "before"
           },
           {
+            "pattern": "layouts/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
             "pattern": "pages/**",
             "group": "parent",
             "position": "before"

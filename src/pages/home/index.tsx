@@ -5,7 +5,7 @@ import svg_metalamp from 'assets/images/metalamp.svg';
 
 import { Image } from 'components/image';
 
-import { WalletButton } from 'containers/wallet-button';
+import { ConnectButton } from 'containers/wallet-button';
 
 import { useWallet } from 'services/ethereum';
 
@@ -24,7 +24,7 @@ export const Home: FC = observer(() => {
   }, [isConnected]);
 
   return (
-    <main className={styles['container']}>
+    <div className={styles['container']}>
       <div className={styles['layout']}>
         <div className={styles['logo']}>
           <Image src={svg_metalamp} alt="Metalamp logo" timeout={700} />
@@ -44,9 +44,9 @@ export const Home: FC = observer(() => {
             </span>
           </p>
 
-          <WalletButton>Connect my wallet</WalletButton>
+          <ConnectButton>Connect my wallet</ConnectButton>
         </div>
       </div>
-    </main>
+    </div>
   );
 });

@@ -1,0 +1,41 @@
+.container {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+
+  height: 60px;
+}
+
+.wallet {
+  opacity: 0;
+
+  transition: opacity 0.5s ease-in-out;
+
+  pointer-events: none;
+
+  &--shown {
+    opacity: 1;
+
+    pointer-events: all;
+  }
+}
+
+.navigation {
+  grid-column: 2;
+
+  ul {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: 30px;
+
+    font-size: 20px;
+  }
+
+  a {
+    color: $accent-color;
+  }
+}

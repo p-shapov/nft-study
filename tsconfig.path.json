@@ -6,6 +6,8 @@
       "assets/*": ["src/assets/*"],
       "components/*": ["src/components/*"],
       "containers/*": ["src/containers/*"],
+      "layouts/*": ["src/layouts/*"],
+      "pages/*": ["src/pages/*"],
       "services/*": ["src/services/*"],
       "shared/*": ["src/shared/*"]
     }

@@ -1,0 +1,25 @@
+.container {
+  @include container;
+}
+
+.layout {
+  display: grid;
+  justify-items: center;
+
+  padding: 20px 0;
+}
+
+.navigation {
+
+  text-transform: uppercase;
+
+  font-size: 16px;
+
+  ul {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: 20px;
+
+    color: $accent-color;
+  }
+}
