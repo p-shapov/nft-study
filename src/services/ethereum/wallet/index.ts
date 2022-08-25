@@ -9,10 +9,11 @@ import type { Connector } from '@web3-react/types';
 
 import { SUPPORTED_CHAIN_ID, LOCAL_STORAGE_KEY, WALLET_CONNECTOR_ID } from 'shared/constants';
 import { provideError } from 'shared/utils/provideError';
+import { ValueOf } from 'shared/types';
 
 export type WalletStatus = 'connected' | 'disconnected' | 'connecting';
 
-export type WalletConnectorID = typeof WALLET_CONNECTOR_ID[keyof typeof WALLET_CONNECTOR_ID];
+export type WalletConnectorID = ValueOf<typeof WALLET_CONNECTOR_ID>;
 
 export class Wallet {
   public get connectors() {

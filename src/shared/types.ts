@@ -7,3 +7,5 @@ export type Callbacks<T extends object> = {
 export type SetNonNullable<T extends object> = {
   [P in keyof T]: NonNullable<T[P]>;
 };
+
+export type ValueOf<T extends object> = T[keyof T];

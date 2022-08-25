@@ -1,10 +1,10 @@
 import { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 
 import { useWallet } from 'services/ethereum';
 
 import { ROUTES } from 'shared/constants';
+import { useGoTo } from 'shared/hooks/useGoTo';
 
 import styles from './module.scss';
 
@@ -12,10 +12,10 @@ export const Mint: FC = () => <Content />;
 
 const Content = observer(() => {
   const isDisconnected = useWallet(({ status }) => status === 'disconnected');
-  const navigate = useNavigate();
+  const goToHome = useGoTo(true, ROUTES.HOME);
 
   useEffect(() => {
-    if (isDisconnected) setTimeout(() => navigate(ROUTES.HOME, { replace: true }));
+    if (isDisconnected) goToHome();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDisconnected]);
 

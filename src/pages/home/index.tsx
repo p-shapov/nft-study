@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 
 import svg_metalamp from 'assets/images/metalamp.svg';
@@ -11,15 +10,16 @@ import { WalletButton } from 'containers/wallet-button';
 import { useWallet } from 'services/ethereum';
 
 import { ROUTES } from 'shared/constants';
+import { useGoTo } from 'shared/hooks/useGoTo';
 
 import styles from './module.scss';
 
 export const Home: FC = observer(() => {
   const isConnected = useWallet(({ status }) => status === 'connected');
-  const navigate = useNavigate();
+  const goToMint = useGoTo(true, ROUTES.MINT);
 
   useEffect(() => {
-    if (isConnected) navigate(ROUTES.MINT, { replace: true });
+    if (isConnected) goToMint();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
 
