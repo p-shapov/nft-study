@@ -9,8 +9,8 @@ export type Props = {
 };
 
 export const QRCode: FC<Props> = ({ value, logo }) => (
-  <div className={styles['wrapper']}>
-    <div className={styles['code']}>
+  <div className={styles['qrcode']}>
+    <div className={styles['layout']}>
       <QRCodeLogo
         value={value}
         size={500}
@@ -18,6 +18,7 @@ export const QRCode: FC<Props> = ({ value, logo }) => (
         ecLevel="H"
         logoImage="/"
         eyeRadius={5}
+        bgColor="transparent"
         removeQrCodeBehindLogo
       />
       {logo && <div className={styles['logo']}>{logo}</div>}

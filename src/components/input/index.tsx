@@ -20,7 +20,7 @@ export const Input: FC<Props> = ({
   theme = 'default',
   onChange,
 }) => (
-  <label className={cn(styles['root'], theme !== 'default' && styles[`root--theme_${theme}`])}>
+  <label className={cn(styles['input'], theme !== 'default' && styles[`input--theme_${theme}`])}>
     <span className={styles['text']}>{text}</span>
     <input
       className={styles['field']}

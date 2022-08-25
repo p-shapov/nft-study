@@ -24,7 +24,7 @@ export const Home: FC = observer(() => {
   }, [isConnected]);
 
   return (
-    <div className={styles['container']}>
+    <div className={styles['home']}>
       <div className={styles['layout']}>
         <div className={styles['logo']}>
           <Image src={svg_metalamp} alt="Metalamp logo" timeout={700} />

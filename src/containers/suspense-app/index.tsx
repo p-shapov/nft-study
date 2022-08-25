@@ -12,5 +12,5 @@ export type Props = {
 export const SuspenseApp: FC<Props> = observer(({ children }) => {
   const isReady = useWallet(({ isReady }) => isReady);
 
-  return <>{isReady && <div className={styles['content']}>{children}</div>}</>;
+  return <>{isReady && <div className={styles['suspense-app']}>{children}</div>}</>;
 });

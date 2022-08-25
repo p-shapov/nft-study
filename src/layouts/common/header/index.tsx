@@ -14,7 +14,7 @@ export const Header: FC = observer(() => {
   const isConnected = useWallet(({ status }) => status === 'connected');
 
   return (
-    <header className={styles['container']}>
+    <header className={styles['header']}>
       <div className={styles['layout']}>
         <div className={cn(styles['wallet'], isConnected && styles['wallet--shown'])}>
           <DisconnectButton />

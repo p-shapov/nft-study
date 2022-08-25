@@ -6,7 +6,7 @@ import styles from './module.scss';
 
 export const Footer: FC = () => {
   return (
-    <footer className={styles['container']}>
+    <footer className={styles['footer']}>
       <div className={styles['layout']}>
         <nav className={styles['navigation']}>
           <ul>

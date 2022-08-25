@@ -10,7 +10,7 @@ export type Props = {
 
 export const Layout: FC<Props> = ({ children }) => {
   return (
-    <div className={styles['content']}>
+    <div className={styles['layout']}>
       <Header />
 
       <main>{children}</main>

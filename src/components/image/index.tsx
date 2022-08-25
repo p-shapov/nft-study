@@ -22,7 +22,7 @@ export const Image: FC<Props> = ({ src, alt, timeout, lazy }) => {
 
   return (
     <img
-      className={cn(styles['root'], loaded && styles['root--loaded'])}
+      className={cn(styles['image'], loaded && styles['image--loaded'])}
       src={src}
       alt={alt}
       onLoad={handleLoad}

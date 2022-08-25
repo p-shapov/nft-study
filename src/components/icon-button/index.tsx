@@ -8,7 +8,7 @@ export type Props = {
 };
 
 export const IconButton: FC<Props> = ({ children, onClick }) => (
-  <button className={styles['root']} onClick={onClick}>
+  <button className={styles['icon-button']} onClick={onClick}>
     {children}
   </button>
 );

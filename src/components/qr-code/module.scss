@@ -1,8 +1,8 @@
-.wrapper {
+.qrcode {
   @include aspect-ratio;
 }
 
-.code {
+.layout {
   display: grid;
 
   padding: 10px;

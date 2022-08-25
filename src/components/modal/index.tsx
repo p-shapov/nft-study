@@ -13,7 +13,7 @@ export type Props = {
 export const Modal: FC<Props> = ({ children, className, onBackdropClick }) => (
   <div className={styles['backdrop']} onClick={onBackdropClick}>
     <FocusTrap>
-      <div className={cn(styles['wrapper'], className)} onClick={(e) => e.stopPropagation()}>
+      <div className={cn(styles['modal'], className)} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </FocusTrap>

@@ -1,0 +1,17 @@
+.counter {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  align-items: center;
+  column-gap: 20px;
+
+  width: max-content;
+}
+
+.field {
+  width: max-content;
+
+  text-align: center;
+
+  font-size: 20px;
+  font-weight: 500;
+}

@@ -33,7 +33,7 @@ export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => 
   const handleClose = () => closeAllModals();
 
   return (
-    <Modal className={cn(styles['wrapper'], isRoot && styles['wrapper--is_root'])}>
+    <Modal className={cn(styles['modal-wallet'], isRoot && styles['modal-wallet--is_root'])}>
       <div className={styles['layout']}>
         <div className={styles['header']}>
           <div className={styles['back']}>
