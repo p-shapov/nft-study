@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { Button } from 'components/button';
@@ -10,16 +10,25 @@ import { MODAL_KEY } from 'shared/constants';
 
 import styles from './module.scss';
 
-export const ConnectButton: FC = observer(() => {
+export type Props = {
+  children?: ReactNode;
+};
+
+export const WalletButton: FC<Props> = observer(({ children = 'Connect wallet' }) => {
   const pushModal = useModal(({ push }) => push);
-  const { isConnected, account, disconnect } = useWallet(({ status, account, connector, disconnect }) => ({
+  const { isConnected, account, disconnect } = useWallet(({ status, account, disconnect }) => ({
     account,
     disconnect,
     isConnected: status === 'connected',
   }));
 
-  const handleDisconnect = () => disconnect();
-  const handleConnect = () => pushModal(MODAL_KEY.WALLET);
+  const handleDisconnect = () => {
+    disconnect();
+  };
+
+  const handleConnect = () => {
+    pushModal(MODAL_KEY.WALLET);
+  };
 
   return (
     <Button
@@ -36,7 +45,7 @@ export const ConnectButton: FC = observer(() => {
           <span className={styles['uppercase']}>Disconnect</span>
         </>
       )}
-      {!isConnected && 'Connect wallet'}
+      {!isConnected && children}
     </Button>
   );
 });

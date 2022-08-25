@@ -112,69 +112,6 @@
   }
 }
 
-@mixin border {
-  border: 1px solid $br-color;
-  box-shadow: -2px 2px 0 0 $br-color;
-}
-
-@mixin card($br-color: #{$primary-color}) {
-  border: 1px solid $br-color;
-  border-radius: 6px;
-  box-shadow: -2px 2px 5px 0 $br-color;
-}
-
-@mixin control($br-color: #{$primary-color}, $bg-color: #{$secondary-color}) {
-  width: 100%;
-  max-width: $control-max-width;
-  height: $control-height;
-  padding: 0 20px;
-
-  background-color: $bg-color;
-  border: 1px solid $br-color;
-  border-radius: 3px;
-  box-shadow: 0 0 0 0 $br-color;
-
-  font-size: 16px;
-
-  transition: box-shadow 0.1s ease-in-out;
-  cursor: pointer;
-
-  &:hover, 
-  &:focus-visible {
-    box-shadow: -2px 2px 5px 0 $br-color;
-
-    .icon {
-      color: $accent-color;
-    }
-  }
-}
-
-@mixin control-inverse($br-color: #{$primary-color}, $bg-color: #{$secondary-color}) {
-  width: 100%;
-  max-width: $control-max-width;
-  height: $control-height;
-  padding: 0 20px;
-
-  background-color: $bg-color;
-  border: 1px solid $br-color;
-  border-radius: 3px;
-  box-shadow: -2px 2px 5px 0 $br-color;
-
-  font-size: 16px;
-
-  transition: box-shadow 0.1s ease-in-out;
-  cursor: pointer;
-
-  &:hover, 
-  &:focus-visible {
-    box-shadow: 0 0 0 0 $br-color;
-
-    .icon {
-      color: $accent-color;
-    }
-  }
-}
-
 @mixin flex-gap($col-gap: 0, $row-gap: 0) {
   margin: calc(-1 * $col-gap) 0 0 calc(-1 * $row-gap);
   width: calc(100% + $row-gap);

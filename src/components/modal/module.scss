@@ -10,11 +10,9 @@
   justify-items: center;
   align-items: center;
 
-  background: rgba($primary-color, 0.4);
+  background: rgba($fg-color, 0.4);
 }
 
 .wrapper {
   @include card;
-
-  background-color: $secondary-color;
 }

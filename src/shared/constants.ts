@@ -13,4 +13,9 @@ export const LOCAL_STORAGE_KEY = {
   WALLET_CONNECTOR: 'wallet_connector',
 } as const;
 
+export const ROUTES = {
+  HOME: '/',
+  MINT: '/mint',
+};
+
 export const SUPPORTED_CHAIN_ID = 5;

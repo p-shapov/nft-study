@@ -5,7 +5,7 @@
   align-items: center;
 
   &--inverse {
-    @include control-inverse
+    @include control($inverse-br: true);
   }
 
   &--uppercase {

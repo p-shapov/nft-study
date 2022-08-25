@@ -1,6 +1,7 @@
-// TODO :: Make custom connectors. Fix collision between coinbase and metamask providers
+// BUG :: Has collision between coinbase and metamask providers.
+// TODO :: Make custom connectors.
 
-import { action, flow, makeAutoObservable, observable } from 'mobx';
+import { action, flow, makeAutoObservable, observable, runInAction } from 'mobx';
 import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
 import { WalletConnect } from '@web3-react/walletconnect';
 import { MetaMask } from '@web3-react/metamask';
@@ -35,6 +36,7 @@ export class Wallet {
     });
   }
 
+  public isReady = false;
   public connector: Connector | null = null;
   public account: string | null = null;
   public chainId: number | null = null;
@@ -69,6 +71,7 @@ export class Wallet {
 
   constructor() {
     makeAutoObservable(this, {
+      isReady: observable.ref,
       connector: observable.ref,
       account: observable.ref,
       chainId: observable.ref,
@@ -82,10 +85,14 @@ export class Wallet {
     this.initWallet();
   }
 
-  private initWallet() {
+  private async initWallet() {
     const connectorId = localStorage.getItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR) as WalletConnectorID;
 
-    if (connectorId) this.connect(connectorId);
+    if (connectorId) await this.connect(connectorId);
+
+    runInAction(() => {
+      this.isReady = true;
+    });
   }
 
   private setState = ({
@@ -130,7 +137,6 @@ export class Wallet {
       name: 'MetaMask',
       instance: new MetaMask(this.actions, false, {
         mustBeMetaMask: true,
-        silent: true,
       }) as Connector & MetaMask,
     },
     [WALLET_CONNECTOR_ID.COINBASE]: {
@@ -139,9 +145,6 @@ export class Wallet {
         appName: 'nft-study',
         headlessMode: true,
         reloadOnDisconnect: false,
-        overrideIsMetaMask: false,
-        overrideIsCoinbaseBrowser: true,
-        overrideIsCoinbaseWallet: true,
         url: '',
       }) as Connector & CoinbaseWallet,
     },
