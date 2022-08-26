@@ -44,7 +44,8 @@
     "react-qrcode-logo": "^2.8.0",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
-    "the-new-css-reset": "^1.7.2"
+    "the-new-css-reset": "^1.7.2",
+    "wagmi": "^0.6.4"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.5",

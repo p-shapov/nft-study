@@ -1,5 +1,7 @@
 // BUG :: Has collision between coinbase and metamask providers.
+// BUG :: Unsupported chain reconnection does not work.
 // TODO :: Make custom connectors.
+// TODO :: Add error handling.
 
 import { action, flow, makeAutoObservable, observable, runInAction } from 'mobx';
 import { CoinbaseWallet } from '@web3-react/coinbase-wallet';
@@ -12,12 +14,15 @@ import { provideError } from 'shared/utils/provideError';
 import { ValueOf } from 'shared/types';
 
 export type WalletStatus = 'connected' | 'disconnected' | 'connecting';
-
 export type WalletConnectorID = ValueOf<typeof WALLET_CONNECTOR_ID>;
 
 export class Wallet {
   public get connectors() {
     return this._connectors;
+  }
+
+  public get isSupported() {
+    return !this.chainId || this.chainId === SUPPORTED_CHAIN_ID;
   }
 
   public getProvider() {
@@ -44,13 +49,17 @@ export class Wallet {
   public status: WalletStatus = 'disconnected';
   public error: Error | null = null;
 
-  public readonly connect = flow(function* (this: Wallet, connectorId: WalletConnectorID) {
+  public readonly connect = flow(function* (
+    this: Wallet,
+    connectorId: WalletConnectorID,
+    chainId: number | false = SUPPORTED_CHAIN_ID,
+  ) {
     const connector = this.connectors[connectorId].instance;
 
     this.setState({ connector, status: 'connecting', error: null });
 
     try {
-      yield connector.activate(SUPPORTED_CHAIN_ID);
+      yield connector.activate(chainId ? chainId : undefined);
       this.setState({ status: 'connected' });
       localStorage.setItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR, connectorId);
     } catch (error) {
@@ -89,7 +98,7 @@ export class Wallet {
   private async initWallet() {
     const connectorId = localStorage.getItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR) as WalletConnectorID;
 
-    if (connectorId) await this.connect(connectorId);
+    if (connectorId) await this.connect(connectorId, false);
 
     runInAction(() => {
       this.isReady = true;
@@ -112,10 +121,9 @@ export class Wallet {
 
   private handleUpdate = ({ accounts, chainId }: { accounts?: Array<string>; chainId?: number }) => {
     const account = accounts?.[0];
-    const isUnsupported = chainId !== SUPPORTED_CHAIN_ID;
     const isDisconnected = !(account || chainId || !localStorage.getItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR));
 
-    if (isDisconnected || isUnsupported) this.disconnect();
+    if (isDisconnected) this.disconnect();
     else this.setState({ chainId, account });
   };
 

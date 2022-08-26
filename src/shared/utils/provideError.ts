@@ -5,6 +5,6 @@ class ProvidedError extends Error {
   }
 }
 
-export const provideError = <T extends Error>(error: T | null) => {
+export const provideError = <T extends Error>(error?: T | null) => {
   if (error) throw new ProvidedError(error.name, error.message);
 };

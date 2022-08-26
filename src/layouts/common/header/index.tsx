@@ -2,11 +2,11 @@ import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 import cn from 'classnames';
 
+import links from 'assets/data/header-links.json';
+
 import { DisconnectButton } from 'containers/wallet-button';
 
 import { useWallet } from 'services/ethereum';
-
-import { HEADER_NAV } from 'shared/constants';
 
 import styles from './module.scss';
 
@@ -22,7 +22,7 @@ export const Header: FC = observer(() => {
 
         <nav className={styles['navigation']}>
           <ul>
-            {HEADER_NAV.map(({ href, text }, idx) => (
+            {links.map(({ href, text }, idx) => (
               <li key={idx}>
                 <a href={href}>{text}</a>
               </li>

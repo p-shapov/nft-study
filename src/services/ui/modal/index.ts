@@ -1,13 +1,18 @@
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 
+import { MODAL_KEY } from 'shared/constants';
+import { ValueOf } from 'shared/types';
+
+export type ModalName = ValueOf<typeof MODAL_KEY>;
+
 export class Modal {
   public get current() {
     return this.stack.at(-1) || null;
   }
 
-  public stack: Array<string> = [];
+  public stack: Array<ModalName> = [];
 
-  public push = (modal: string) => {
+  public push = (modal: ModalName) => {
     this.stack.push(modal);
   };
 

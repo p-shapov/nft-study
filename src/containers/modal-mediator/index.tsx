@@ -4,10 +4,11 @@ import { observer } from 'mobx-react-lite';
 import { ModalCoinbase, ModalMetamask, ModalWalletConnect, ModalConnect } from 'containers/modal-wallet';
 
 import { useModal } from 'services/ui';
+import { ModalName } from 'services/ui/modal';
 
 import { MODAL_KEY } from 'shared/constants';
 
-const modals: Record<string, ReactElement> = {
+const modals: Record<ModalName, ReactElement> = {
   [MODAL_KEY.WALLET]: <ModalConnect />,
   [MODAL_KEY.METAMASK]: <ModalMetamask />,
   [MODAL_KEY.COINBASE]: <ModalCoinbase />,
@@ -17,5 +18,5 @@ const modals: Record<string, ReactElement> = {
 export const ModalMediator = observer(() => {
   const { current } = useModal(({ current, clear }) => ({ current, clear }));
 
-  return <>{current && modals[current] && modals[current]}</>;
+  return <>{current && modals[current]}</>;
 });

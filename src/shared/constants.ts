@@ -1,7 +1,7 @@
 export const WALLET_CONNECTOR_ID = {
-  METAMASK: 'metamask_wallet',
-  COINBASE: 'coinbase_wallet',
-  WALLET_CONNECT: 'walletConnect_wallet',
+  METAMASK: 'metamask',
+  COINBASE: 'coinbase',
+  WALLET_CONNECT: 'walletConnect',
 } as const;
 
 export const MODAL_KEY = {
@@ -17,20 +17,5 @@ export const ROUTES = {
   HOME: '/',
   MINT: '/mint',
 };
-
-export const HEADER_NAV = [
-  { href: 'change/me', text: 'About' },
-  { href: 'change/me', text: 'Roadmap' },
-  { href: 'change/me', text: 'Team' },
-  { href: 'change/me', text: 'Gallery' },
-];
-
-export const FOOTER_NAV = [
-  { href: 'change/me', text: 'Instagram' },
-  { href: 'change/me', text: 'Discord' },
-  { href: 'change/me', text: 'Facebook' },
-  { href: 'change/me', text: 'Telegram' },
-  { href: 'change/me', text: 'Be' },
-];
 
 export const SUPPORTED_CHAIN_ID = 5;
