@@ -1,9 +1,6 @@
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 
-import { MODAL_KEY } from 'shared/constants';
-import { ValueOf } from 'shared/types';
-
-export type ModalName = ValueOf<typeof MODAL_KEY>;
+import { ModalName } from './types';
 
 export class Modal {
   public get current() {

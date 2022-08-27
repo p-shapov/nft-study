@@ -4,9 +4,8 @@ import { observer } from 'mobx-react-lite';
 import { Button } from 'components/button';
 
 import { useModal } from 'services/ui';
+import { ModalName } from 'services/ui/modal/types';
 import { useWallet } from 'services/ethereum';
-
-import { MODAL_KEY } from 'shared/constants';
 
 import styles from './module.scss';
 
@@ -30,7 +29,7 @@ export const WalletButton: FC<Props> = observer((props) => {
   const handleClick = () => {
     switch (props.type) {
       case 'connect':
-        return pushModal(MODAL_KEY.WALLET);
+        return pushModal(ModalName.WALLET);
       case 'disconnect':
         return disconnect();
     }

@@ -6,14 +6,14 @@ import { Home } from 'pages/home';
 import { Mint } from 'pages/mint';
 import { UiKit } from 'pages/ui-kit';
 
-import { ROUTES } from 'shared/constants';
+import { Path } from 'shared/hooks/useGoTo';
 
 export const App = () => {
   return (
     <Layout>
       <Routes>
-        <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.MINT} element={<Mint />} />
+        <Route path={Path.HOME} element={<Home />} />
+        <Route path={Path.MINT} element={<Mint />} />
 
         {process.env.NODE_ENV === 'development' && <Route path="/ui-kit" element={<UiKit />} />}
       </Routes>

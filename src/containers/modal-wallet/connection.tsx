@@ -7,7 +7,7 @@ import { IconButton } from 'components/icon-button';
 import { LoaderLine } from 'components/loader-line';
 
 import { useWallet } from 'services/ethereum';
-import { WalletConnectorId } from 'services/ethereum/wallet';
+import { WalletConnectorId } from 'services/ethereum/wallet/types';
 
 import styles from './module.scss';
 

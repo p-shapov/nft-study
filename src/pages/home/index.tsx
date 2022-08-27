@@ -8,15 +8,14 @@ import { Image } from 'components/image';
 import { ConnectButton } from 'containers/wallet-button';
 
 import { useWallet } from 'services/ethereum';
-import { useGoTo } from 'services/ui/hooks/useGoTo';
 
-import { ROUTES } from 'shared/constants';
+import { Path, useGoTo } from 'shared/hooks/useGoTo';
 
 import styles from './module.scss';
 
 export const Home: FC = observer(() => {
   const isConnected = useWallet(({ status }) => status === 'connected');
-  const goToMint = useGoTo(true, ROUTES.MINT);
+  const goToMint = useGoTo(true, Path.MINT);
 
   useEffect(() => {
     if (isConnected) goToMint();

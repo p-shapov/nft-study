@@ -28,9 +28,13 @@ export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
 
-  const handleBack = () => popModal();
+  const handleBack = () => {
+    popModal();
+  };
 
-  const handleClose = () => closeAllModals();
+  const handleClose = () => {
+    closeAllModals();
+  };
 
   return (
     <Modal className={cn(styles['modal-wallet'], isRoot && styles['modal-wallet--is_root'])}>

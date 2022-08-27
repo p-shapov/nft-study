@@ -1,23 +1,18 @@
-// TODO :: Add error handling.
-
 import { action, flow, makeAutoObservable, observable, runInAction } from 'mobx';
 import { createClient, configureChains } from '@wagmi/core';
-import type { ConnectorData } from '@wagmi/core';
+import type { Connector, ConnectorData } from '@wagmi/core';
 import { goerli } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet';
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 
-import { LOCAL_STORAGE_KEY, WALLET_CONNECTOR_ID } from 'shared/constants';
-
-export type WalletStatus = 'connected' | 'disconnected' | 'connecting';
-export type WalletConnectorId = keyof typeof connectors;
+import { WalletChain, WalletConnectorId, WalletLocalStorageKey, WalletStatus } from './types';
 
 const { chains, provider, webSocketProvider } = configureChains([goerli], [publicProvider()]);
 
-const connectors = {
-  [WALLET_CONNECTOR_ID.METAMASK]: new MetaMaskConnector({
+const connectors: Record<WalletConnectorId, Connector> = {
+  [WalletConnectorId.METAMASK]: new MetaMaskConnector({
     chains,
     options: {
       shimDisconnect: true,
@@ -25,7 +20,7 @@ const connectors = {
       UNSTABLE_shimOnConnectSelectAccount: true,
     },
   }),
-  [WALLET_CONNECTOR_ID.COINBASE]: new CoinbaseWalletConnector({
+  [WalletConnectorId.COINBASE]: new CoinbaseWalletConnector({
     chains,
     options: {
       appName: 'Metalamp NFT project',
@@ -34,14 +29,14 @@ const connectors = {
       chainId: goerli.id,
     },
   }),
-  [WALLET_CONNECTOR_ID.WALLET_CONNECT]: new WalletConnectConnector({
+  [WalletConnectorId.WALLET_CONNECT]: new WalletConnectConnector({
     chains,
     options: {
       qrcode: false,
       chainId: goerli.id,
     },
   }),
-} as const;
+};
 
 const client = createClient({
   autoConnect: true,
@@ -81,7 +76,7 @@ export class Wallet {
 
   public isReady = false;
   public account: string | null = null;
-  public chain: { id: number; unsupported: boolean } | null = null;
+  public chain: WalletChain | null = null;
   public status: WalletStatus = 'disconnected';
   public error: Error | null = null;
 
@@ -93,33 +88,30 @@ export class Wallet {
     this.connectorId = id;
     this.setState({ status: 'connecting', error: null });
 
-    try {
-      if (this.connector) {
+    if (this.connector) {
+      try {
         const data = yield this.connector.connect({ chainId: chainId || undefined });
 
-        this.connector.on('change', this.handleChange);
-        this.connector.on('connect', this.handleConnect);
-        this.connector.on('disconnect', this.handleDisconnect);
-        this.connector.on('error', this.handleError);
         this.connector.emit('connect', data);
+      } catch (error) {
+        this.connectorId = null;
+        this.handleError(error);
       }
-    } catch (error) {
-      this.setState({ status: 'disconnected' });
-      this.handleError(error);
     }
   });
 
   public readonly disconnect = flow(function* (this: Wallet) {
     this.setState({ error: null });
 
-    try {
-      if (this.connector) {
+    if (this.connector) {
+      try {
         yield this.connector.disconnect();
 
         this.connector.emit('disconnect');
+        this.connectorId = null;
+      } catch (error) {
+        this.handleError(error);
       }
-    } catch (error) {
-      this.handleError(error);
     }
   });
 
@@ -139,25 +131,46 @@ export class Wallet {
   }
 
   private get connectorId(): WalletConnectorId | null {
-    return localStorage.getItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR) as WalletConnectorId | null;
+    return localStorage.getItem(WalletLocalStorageKey.CONNECTOR_ID) as WalletConnectorId | null;
   }
 
   private set connectorId(id: WalletConnectorId | null) {
-    if (id) localStorage.setItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR, id);
-    else localStorage.removeItem(LOCAL_STORAGE_KEY.WALLET_CONNECTOR);
+    if (id) localStorage.setItem(WalletLocalStorageKey.CONNECTOR_ID, id);
+    else localStorage.removeItem(WalletLocalStorageKey.CONNECTOR_ID);
   }
 
   private get connector() {
     const id = this.connectorId;
 
-    if (id) return this.connectors[id];
+    if (id) {
+      const connector = this.connectors[id];
+
+      if (connector !== this.bufferedConnector) {
+        this.bufferedConnector?.off('change', this.handleChange);
+        this.bufferedConnector?.off('connect', this.handleConnect);
+        this.bufferedConnector?.off('disconnect', this.handleDisconnect);
+        this.bufferedConnector?.off('error', this.handleError);
+        this.bufferedConnector = connector;
+
+        connector.on('change', this.handleChange);
+        connector.on('connect', this.handleConnect);
+        connector.on('disconnect', this.handleDisconnect);
+        connector.on('error', this.handleError);
+      }
+
+      return connector;
+    }
 
     return null;
   }
 
+  private bufferedConnector: Connector | null = null;
+
   private async initWallet() {
-    if (this.connectorId && client.status !== 'disconnected') await this.connect(this.connectorId, null);
-    if (client.status === 'disconnected') this.connectorId = null;
+    if (this.connectorId) {
+      if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
+      else if (client.status === 'disconnected') this.connectorId = null;
+    }
 
     runInAction(() => (this.isReady = true));
   }
@@ -180,15 +193,6 @@ export class Wallet {
 
   private handleDisconnect = () => {
     this.setState({ status: 'disconnected', account: null, chain: null, error: null });
-
-    if (this.connector) {
-      this.connector.off('change', this.handleChange);
-      this.connector.off('connect', this.handleConnect);
-      this.connector.off('disconnect', this.handleDisconnect);
-      this.connector.off('error', this.handleError);
-    }
-
-    this.connectorId = null;
   };
 
   private handleChange = (data: ConnectorData) => {
