@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { ModalMediator } from 'containers/modal-mediator';
 import { SuspenseApp } from 'containers/suspense-app';
+import { DevPanel } from 'containers/dev-panel';
 
 import { UIProvider } from 'services/ui';
 import { EthereumProvider } from 'services/ethereum';
@@ -23,6 +24,7 @@ root.render(
             <App />
           </SuspenseApp>
           <ModalMediator />
+          <DevPanel />
         </BrowserRouter>
       </UIProvider>
     </EthereumProvider>

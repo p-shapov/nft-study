@@ -1,0 +1,32 @@
+.dev-button {
+  position: fixed;
+  z-index: 1000;
+  left: 30px;
+  bottom: 60px;
+
+  font-size: 24px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.dev-panel {
+  position: fixed;
+  z-index: 1000;
+  right: -100%;
+  top: 0;
+
+  width: 30vw;
+  height: 100vh;
+  padding: 60px 30px;
+
+  background-color: $bg-color;
+
+  transition: right 0.5s ease-in-out;
+
+  overflow-y: scroll;
+
+  &--expanded {
+    right: 0;
+  }
+}

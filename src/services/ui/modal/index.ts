@@ -13,11 +13,11 @@ export class Modal {
   public stack: Array<ModalName> = [];
 
   public push = (modal: ModalName) => {
-    this.stack.push(modal);
+    this.stack = [...this.stack, modal];
   };
 
   public pop = () => {
-    this.stack.pop();
+    this.stack = this.stack.slice(0, -1);
   };
 
   public clear = () => {
@@ -27,7 +27,7 @@ export class Modal {
   constructor() {
     makeAutoObservable(this, {
       current: computed,
-      stack: observable,
+      stack: observable.ref,
       push: action.bound,
       pop: action.bound,
       clear: action.bound,
