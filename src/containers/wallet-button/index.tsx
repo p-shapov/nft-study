@@ -21,14 +21,11 @@ export type Props =
 
 export const WalletButton: FC<Props> = observer((props) => {
   const pushModal = useModal(({ push }) => push);
-  const { isConnected, isSupported, account, disconnect } = useWallet(
-    ({ status, isSupported, account, disconnect }) => ({
-      account,
-      disconnect,
-      isSupported,
-      isConnected: status === 'connected',
-    }),
-  );
+  const { isConnected, account, disconnect } = useWallet(({ status, account, disconnect }) => ({
+    account,
+    disconnect,
+    isConnected: status === 'connected',
+  }));
 
   const handleClick = () => {
     switch (props.type) {
@@ -43,13 +40,11 @@ export const WalletButton: FC<Props> = observer((props) => {
     <Button onClick={handleClick} inverse={isConnected} withSpinner={isConnected} shrink>
       {props.type === 'disconnect' && (
         <>
-          {!!account && isSupported && (
+          {!!account && (
             <span>
               {account.slice(0, 6)}...{account.slice(-5, -1)}
             </span>
           )}
-
-          {!isSupported && <span className={styles['uppercase']}>Unsupported chain</span>}
 
           <span className={styles['uppercase']}>Disconnect</span>
         </>

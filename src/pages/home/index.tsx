@@ -8,9 +8,9 @@ import { Image } from 'components/image';
 import { ConnectButton } from 'containers/wallet-button';
 
 import { useWallet } from 'services/ethereum';
+import { useGoTo } from 'services/ui/hooks/useGoTo';
 
 import { ROUTES } from 'shared/constants';
-import { useGoTo } from 'shared/hooks/useGoTo';
 
 import styles from './module.scss';
 

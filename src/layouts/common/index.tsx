@@ -12,9 +12,7 @@ export const Layout: FC<Props> = ({ children }) => {
   return (
     <div className={styles['layout']}>
       <Header />
-
       <main>{children}</main>
-
       <Footer />
     </div>
   );

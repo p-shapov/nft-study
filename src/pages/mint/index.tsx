@@ -2,9 +2,9 @@ import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 
 import { useWallet } from 'services/ethereum';
+import { useGoTo } from 'services/ui/hooks/useGoTo';
 
 import { ROUTES } from 'shared/constants';
-import { useGoTo } from 'shared/hooks/useGoTo';
 
 import styles from './module.scss';
 
