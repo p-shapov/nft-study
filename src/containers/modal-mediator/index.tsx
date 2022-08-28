@@ -14,7 +14,10 @@ const modals: Record<ModalName, ReactElement> = {
 };
 
 export const ModalMediator = observer(() => {
-  const { current } = useModal(({ current, clear }) => ({ current, clear }));
+  const { current } = useModal((modal) => ({
+    current: modal.current,
+    clear: modal.clear,
+  }));
 
   return <>{current && modals[current]}</>;
 });

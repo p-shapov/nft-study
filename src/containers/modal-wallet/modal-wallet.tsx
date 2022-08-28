@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { FC, ReactNode, useEffect } from 'react';
 import cn from 'classnames';
+import { computed } from 'mobx';
 
 import { ico_chevron_left } from 'assets/icons/chevron-left';
 import { ico_cross_circle } from 'assets/icons/cross-circle';
@@ -20,8 +21,11 @@ export type Props = {
 };
 
 export const ModalWallet: FC<Props> = observer(({ isRoot, title, children }) => {
-  const isConnected = useWallet(({ status }) => status === 'connected');
-  const { pop: popModal, clear: closeAllModals } = useModal(({ pop, clear }) => ({ pop, clear }));
+  const isConnected = useWallet((wallet) => computed(() => wallet.status === 'connected').get());
+  const { pop: popModal, clear: closeAllModals } = useModal((modal) => ({
+    pop: modal.pop,
+    clear: modal.clear,
+  }));
 
   useEffect(() => {
     if (isConnected) closeAllModals();

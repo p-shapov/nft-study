@@ -1,17 +1,18 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 import cn from 'classnames';
+import { computed } from 'mobx';
 
 import links from 'assets/data/header-links.json';
 
-import { DisconnectButton } from 'containers/wallet-button';
+import { DisconnectButton } from 'containers/disconnect-button';
 
 import { useWallet } from 'services/ethereum';
 
 import styles from './module.scss';
 
 export const Header: FC = observer(() => {
-  const isConnected = useWallet(({ status }) => status === 'connected');
+  const isConnected = useWallet((wallet) => computed(() => wallet.status === 'connected').get());
 
   return (
     <header className={styles['header']}>

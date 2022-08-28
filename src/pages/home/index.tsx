@@ -1,11 +1,12 @@
 import { FC, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
+import { computed } from 'mobx';
 
 import svg_metalamp from 'assets/images/metalamp.svg';
 
 import { Image } from 'components/image';
 
-import { ConnectButton } from 'containers/wallet-button';
+import { ConnectButton } from 'containers/connect-button';
 
 import { useWallet } from 'services/ethereum';
 
@@ -14,7 +15,7 @@ import { Path, useGoTo } from 'shared/hooks/useGoTo';
 import styles from './module.scss';
 
 export const Home: FC = observer(() => {
-  const isConnected = useWallet(({ status }) => status === 'connected');
+  const isConnected = useWallet((wallet) => computed(() => wallet.status === 'connected').get());
   const goToMint = useGoTo(true, Path.MINT);
 
   useEffect(() => {

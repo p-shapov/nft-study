@@ -1,5 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { observer } from 'mobx-react-lite';
+import { computed } from 'mobx';
 
 import { ico_refresh } from 'assets/icons/refresh';
 
@@ -17,13 +18,15 @@ export type Props = {
 };
 
 export const Connection: FC<Props> = observer(({ id, children }) => {
-  const { connect, hasError, errorMessage } = useWallet(({ error, connect }) => ({
-    connect,
-    hasError: !!error,
-    errorMessage: error?.message,
+  const { connect, hasError, errorMessage } = useWallet((wallet) => ({
+    connect: wallet.connect,
+    hasError: computed(() => !!wallet.error).get(),
+    errorMessage: computed(() => wallet.error?.message).get(),
   }));
 
-  const handleRetry = () => connect(id);
+  const handleRetry = () => {
+    connect(id);
+  };
 
   return (
     <>

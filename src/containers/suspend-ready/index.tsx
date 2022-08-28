@@ -10,7 +10,7 @@ export type Props = {
 };
 
 export const SuspendReady: FC<Props> = observer(({ children }) => {
-  const isReady = useWallet(({ isReady }) => isReady);
+  const isReady = useWallet((wallet) => wallet.isReady);
 
   return <>{isReady && <div className={styles['suspend-ready']}>{children}</div>}</>;
 });

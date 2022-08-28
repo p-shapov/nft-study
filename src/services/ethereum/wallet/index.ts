@@ -76,8 +76,8 @@ export class Wallet {
 
   public isReady = false;
   public account: string | null = null;
-  public chain: WalletChain | null = null;
   public status: WalletStatus = 'disconnected';
+  public chain: WalletChain | null = null;
   public error: Error | null = null;
 
   public readonly connect = flow(function* (
@@ -117,17 +117,26 @@ export class Wallet {
 
   constructor() {
     makeAutoObservable(this, {
-      isReady: observable.ref,
-      account: observable.ref,
-      chain: observable.struct,
-      status: observable.ref,
-      error: observable.ref,
       connect: flow.bound,
       disconnect: flow.bound,
       getProvider: action.bound,
       getSigner: action.bound,
+      isReady: observable.ref,
+      account: observable.ref,
+      status: observable.ref,
+      chain: observable.struct,
+      error: observable.ref,
     });
     this.initWallet();
+  }
+
+  private async initWallet() {
+    if (this.connectorId) {
+      if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
+      else if (client.status === 'disconnected') this.connectorId = null;
+    }
+
+    runInAction(() => (this.isReady = true));
   }
 
   private get connectorId(): WalletConnectorId | null {
@@ -165,15 +174,6 @@ export class Wallet {
   }
 
   private bufferedConnector: Connector | null = null;
-
-  private async initWallet() {
-    if (this.connectorId) {
-      if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
-      else if (client.status === 'disconnected') this.connectorId = null;
-    }
-
-    runInAction(() => (this.isReady = true));
-  }
 
   private setState = ({
     account,
