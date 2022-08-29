@@ -14,9 +14,7 @@ export const DevPanel: FC = observer(() => {
   const { wallet } = useEthereum();
   const { modal } = useUI();
 
-  const handleTogglePanel = () => {
-    setExpanded((x) => !x);
-  };
+  const handleTogglePanel = () => setExpanded((x) => !x);
 
   return (
     <>
@@ -38,6 +36,7 @@ export const DevPanel: FC = observer(() => {
             },
             ui: {
               modal: {
+                current: modal.current,
                 stack: modal.stack,
               },
             },

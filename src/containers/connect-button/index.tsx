@@ -13,9 +13,7 @@ export type Props = {
 export const ConnectButton: FC<Props> = observer((props) => {
   const pushModal = useModal((modal) => modal.push);
 
-  const handleClick = () => {
-    pushModal(ModalName.WALLET);
-  };
+  const handleClick = () => pushModal(ModalName.WALLET);
 
   return (
     <Button onClick={handleClick} shrink>

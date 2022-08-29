@@ -1,4 +1,4 @@
-import { action, computed, makeAutoObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 
 import { ModalName } from './types';
 
@@ -22,7 +22,7 @@ export class Modal {
   }
 
   constructor() {
-    makeAutoObservable(this, {
+    makeObservable(this, {
       current: computed,
       stack: observable,
       push: action.bound,

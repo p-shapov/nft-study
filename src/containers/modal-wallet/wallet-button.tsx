@@ -7,7 +7,6 @@ import { ico_wallet_connect } from 'assets/icons/wallet-connect';
 
 import { Button } from 'components/button';
 
-import { useWallet } from 'services/ethereum';
 import { WalletConnectorId } from 'services/ethereum/wallet/types';
 import { useModal } from 'services/ui';
 import { ModalName } from 'services/ui/modal/types';
@@ -30,13 +29,9 @@ export type Props = {
 };
 
 export const WalletButton: FC<Props> = observer(({ id, children }) => {
-  const connect = useWallet((wallet) => wallet.connect);
   const pushModal = useModal((modal) => modal.push);
 
-  const handleConnect = () => {
-    connect(id);
-    pushModal(walletModals[id]);
-  };
+  const handleConnect = () => pushModal(walletModals[id]);
 
   return (
     <Button onClick={handleConnect} icon={walletIcons[id]} uppercase>

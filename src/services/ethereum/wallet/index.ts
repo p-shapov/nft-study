@@ -1,4 +1,4 @@
-import { action, flow, makeAutoObservable, observable, runInAction } from 'mobx';
+import { flow, makeObservable, observable, runInAction } from 'mobx';
 import { createClient, configureChains } from '@wagmi/core';
 import type { Connector, ConnectorData } from '@wagmi/core';
 import { goerli } from '@wagmi/core/chains';
@@ -50,7 +50,7 @@ export class Wallet {
     return connectors;
   }
 
-  public async getProvider() {
+  public getProvider = async () => {
     try {
       const provider = await this.connector?.getProvider();
 
@@ -60,9 +60,9 @@ export class Wallet {
 
       return null;
     }
-  }
+  };
 
-  public async getSigner() {
+  public getSigner = async () => {
     try {
       const signer = await this.connector?.getSigner();
 
@@ -72,7 +72,7 @@ export class Wallet {
 
       return null;
     }
-  }
+  };
 
   public isReady = false;
   public account: string | null = null;
@@ -96,6 +96,8 @@ export class Wallet {
       } catch (error) {
         this.connectorId = null;
         this.handleError(error);
+      } finally {
+        if (this.status === 'connecting') this.setState({ status: 'disconnected' });
       }
     }
   });
@@ -116,11 +118,9 @@ export class Wallet {
   });
 
   constructor() {
-    makeAutoObservable(this, {
+    makeObservable(this, {
       connect: flow.bound,
       disconnect: flow.bound,
-      getProvider: action.bound,
-      getSigner: action.bound,
       isReady: observable.ref,
       account: observable.ref,
       status: observable.ref,
@@ -130,14 +130,7 @@ export class Wallet {
     this.initWallet();
   }
 
-  private async initWallet() {
-    if (this.connectorId) {
-      if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
-      else if (client.status === 'disconnected') this.connectorId = null;
-    }
-
-    runInAction(() => (this.isReady = true));
-  }
+  private bufferedConnector: Connector | null = null;
 
   private get connectorId(): WalletConnectorId | null {
     return localStorage.getItem(WalletLocalStorageKey.CONNECTOR_ID) as WalletConnectorId | null;
@@ -173,7 +166,14 @@ export class Wallet {
     return null;
   }
 
-  private bufferedConnector: Connector | null = null;
+  private async initWallet() {
+    if (this.connectorId) {
+      if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
+      else if (client.status === 'disconnected') this.connectorId = null;
+    }
+
+    runInAction(() => (this.isReady = true));
+  }
 
   private setState = ({
     account,

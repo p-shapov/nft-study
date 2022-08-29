@@ -13,9 +13,7 @@ export const DisconnectButton: FC = observer(() => {
     disconnect: wallet.disconnect,
   }));
 
-  const handleClick = () => {
-    disconnect();
-  };
+  const handleClick = () => disconnect();
 
   const trimmedAccount = account && `${account.slice(0, 6)}…${account.slice(-5, -1)}`;
 

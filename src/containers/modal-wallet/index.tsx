@@ -71,25 +71,30 @@ export const ModalWalletConnect: FC = () => {
 };
 
 const useQrcode = () => {
-  const getQrcode = useWallet(({ getProvider }) => async () => {
-    try {
-      const provider = await getProvider();
+  const getQrcode = useWallet((wallet) => async () => {
+    const provider = await wallet.getProvider();
 
-      if (provider instanceof WalletConnectProvider) return provider.connector.uri || null;
-      if (provider instanceof CoinbaseWalletProvider) return provider.qrUrl || null;
+    if (provider instanceof WalletConnectProvider) return provider.connector.uri || null;
+    if (provider instanceof CoinbaseWalletProvider) return provider.qrUrl || null;
 
-      return null;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-
-      return null;
-    }
+    return null;
   });
   const [qrcode, setQrcode] = useState<string | null>(null);
 
   useEffect(() => {
-    setTimeout(() => getQrcode().then(setQrcode));
+    let canceled = false;
+
+    const asyncSetQrcode = async () => {
+      const qrcode = await getQrcode();
+
+      if (!canceled) setQrcode(qrcode);
+    };
+
+    setTimeout(() => asyncSetQrcode());
+
+    return () => {
+      canceled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

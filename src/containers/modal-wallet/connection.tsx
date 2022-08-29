@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { computed } from 'mobx';
 
@@ -24,9 +24,14 @@ export const Connection: FC<Props> = observer(({ id, children }) => {
     errorMessage: computed(() => wallet.error?.message).get(),
   }));
 
-  const handleRetry = () => {
-    connect(id);
-  };
+  useEffect(() => {
+    const connection = connect(id);
+
+    return () => connection.cancel();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const handleRetry = () => connect(id);
 
   return (
     <>
