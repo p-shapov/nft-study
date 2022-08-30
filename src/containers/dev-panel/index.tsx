@@ -23,25 +23,27 @@ export const DevPanel: FC = observer(() => {
       </button>
 
       <div className={cn(styles['dev-panel'], expanded && styles['dev-panel--expanded'])}>
-        <ReactJSON
-          src={{
-            ethereum: {
-              wallet: {
-                isReady: wallet.isReady,
-                account: wallet.account,
-                status: wallet.status,
-                chain: wallet.chain,
-                error: wallet.error,
+        <div className={styles['layout']}>
+          <ReactJSON
+            src={{
+              ethereum: {
+                wallet: {
+                  isReady: wallet.isReady,
+                  account: wallet.account,
+                  status: wallet.status,
+                  chain: wallet.chain,
+                  error: wallet.error,
+                },
               },
-            },
-            ui: {
-              modal: {
-                current: modal.current,
-                stack: modal.stack,
+              ui: {
+                modal: {
+                  current: modal.current,
+                  stack: modal.stack,
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
     </>
   );

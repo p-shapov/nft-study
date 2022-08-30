@@ -46,39 +46,14 @@ const client = createClient({
 });
 
 export class Wallet {
-  public get connectors() {
-    return connectors;
-  }
-
-  public getProvider = async () => {
-    try {
-      const provider = await this.connector?.getProvider();
-
-      return provider || null;
-    } catch (error) {
-      this.handleError(error);
-
-      return null;
-    }
-  };
-
-  public getSigner = async () => {
-    try {
-      const signer = await this.connector?.getSigner();
-
-      return signer || null;
-    } catch (error) {
-      this.handleError(error);
-
-      return null;
-    }
-  };
-
   public isReady = false;
   public account: string | null = null;
   public status: WalletStatus = 'disconnected';
   public chain: WalletChain | null = null;
   public error: Error | null = null;
+  public get connectors() {
+    return connectors;
+  }
 
   public readonly connect = flow(function* (
     this: Wallet,
@@ -117,6 +92,34 @@ export class Wallet {
     }
   });
 
+  public getProvider = async () => {
+    try {
+      const provider = await this.connector?.getProvider();
+
+      return provider || null;
+    } catch (error) {
+      this.handleError(error);
+
+      return null;
+    }
+  };
+
+  public getSigner = async () => {
+    try {
+      const signer = await this.connector?.getSigner();
+
+      return signer || null;
+    } catch (error) {
+      this.handleError(error);
+
+      return null;
+    }
+  };
+
+  public storeConnection = (connection: Wallet['currentConnection']) => {
+    this.currentConnection = connection;
+  };
+
   constructor() {
     makeObservable(this, {
       connect: flow.bound,
@@ -129,6 +132,13 @@ export class Wallet {
     });
     this.initWallet();
   }
+
+  private set currentConnection(value: Wallet['bufferedConnection']) {
+    this.bufferedConnection?.cancel();
+    this.bufferedConnection = value;
+  }
+
+  private bufferedConnection: ReturnType<Wallet['connect']> | null = null;
 
   private bufferedConnector: Connector | null = null;
 
@@ -189,17 +199,25 @@ export class Wallet {
 
   private handleConnect = (data: ConnectorData) => {
     this.setState({ status: 'connected', ...data });
+
+    return true;
   };
 
   private handleDisconnect = () => {
     this.setState({ status: 'disconnected', account: null, chain: null, error: null });
+
+    return true;
   };
 
   private handleChange = (data: ConnectorData) => {
     this.setState(data);
+
+    return true;
   };
 
   private handleError = (error: unknown) => {
     if (error instanceof Error) this.setState({ error });
+
+    return true;
   };
 }

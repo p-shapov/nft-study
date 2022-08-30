@@ -16,17 +16,35 @@
   right: -100%;
   top: 0;
 
-  width: 30vw;
-  height: 100vh;
-  padding: 60px 30px;
-
-  background-color: $bg-color;
+  display: grid;
 
   transition: right 0.5s ease-in-out;
 
   overflow-y: scroll;
 
+  > *, &::after {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
   &--expanded {
     right: 0;
   }
+
+  &::after {
+    content: "";
+
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba($bg-color, 0.8);
+  }
+}
+
+.layout {
+  width: 30vw;
+  height: 100vh;
+  padding: 60px 30px;
 }
