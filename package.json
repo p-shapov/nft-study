@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@coinbase/wallet-sdk": "^3.5.0",
+    "@typechain/ethers-v5": "^10.1.0",
     "@wagmi/core": "^0.5.4",
     "@walletconnect/ethereum-provider": "^1.8.0",
     "axios": "^0.27.2",
@@ -39,11 +40,13 @@
     "mobx-react-lite": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.4.0",
     "react-json-view": "^1.21.3",
     "react-qrcode-logo": "^2.8.0",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
-    "the-new-css-reset": "^1.7.2"
+    "the-new-css-reset": "^1.7.2",
+    "typechain": "^8.1.0"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.5",
