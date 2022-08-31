@@ -92,7 +92,7 @@ export class Wallet {
     }
   });
 
-  public getProvider = async () => {
+  public readonly getProvider = async () => {
     try {
       const provider = await this.connector?.getProvider();
 
@@ -104,7 +104,7 @@ export class Wallet {
     }
   };
 
-  public getSigner = async () => {
+  public readonly getSigner = async () => {
     try {
       const signer = await this.connector?.getSigner();
 
@@ -116,7 +116,7 @@ export class Wallet {
     }
   };
 
-  public storeConnection = (connection: Wallet['currentConnection']) => {
+  public readonly storeConnection = (connection: Wallet['currentConnection']) => {
     this.currentConnection = connection;
   };
 

@@ -38,6 +38,11 @@
             "position": "before"
           },
           {
+            "pattern": "contracts/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
             "pattern": "layouts/**",
             "group": "parent",
             "position": "before"
@@ -54,6 +59,11 @@
           },
           {
             "pattern": "shared/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "types/**",
             "group": "parent",
             "position": "before"
           }
