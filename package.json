@@ -47,12 +47,10 @@
     "the-new-css-reset": "^1.7.2"
   },
   "devDependencies": {
-    "@0x/abi-gen": "^5.8.1",
     "@craco/craco": "^6.4.5",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "@typechain/ethers-v5": "^10.1.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.11.41",
     "@types/react": "^18.0.14",
@@ -61,8 +59,6 @@
     "buffer": "^6.0.3",
     "concurrently": "^7.3.0",
     "craco-sass-resources-loader": "^1.1.0",
-    "cross-env": "^7.0.3",
-    "cross-var": "^1.1.0",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
@@ -75,7 +71,6 @@
     "run-for-every-file": "^1.1.0",
     "sass": "^1.54.3",
     "serve": "^14.0.1",
-    "typechain": "^8.1.0",
     "typed-scss-modules": "^6.5.0",
     "typescript": "^4.7.4",
     "webpack": "^5.74.0"
