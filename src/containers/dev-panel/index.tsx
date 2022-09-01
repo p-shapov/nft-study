@@ -3,16 +3,14 @@ import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
 import ReactJSON from 'react-json-view';
 
-import { useEthereum } from 'services/ethereum';
-import { useUI } from 'services/ui';
+import { useStore } from 'store/hooks/useStore';
 
 import styles from './module.scss';
 
 export const DevPanel: FC = observer(() => {
   const [expanded, setExpanded] = useState(false);
 
-  const { wallet } = useEthereum();
-  const { modal } = useUI();
+  const { wallet, modal } = useStore();
 
   const handleTogglePanel = () => setExpanded((x) => !x);
 
@@ -26,7 +24,7 @@ export const DevPanel: FC = observer(() => {
         <div className={styles['layout']}>
           <ReactJSON
             src={{
-              ethereum: {
+              store: {
                 wallet: {
                   isReady: wallet.isReady,
                   account: wallet.account,
@@ -34,8 +32,6 @@ export const DevPanel: FC = observer(() => {
                   chain: wallet.chain,
                   error: wallet.error,
                 },
-              },
-              ui: {
                 modal: {
                   current: modal.current,
                   stack: modal.stack,

@@ -9,8 +9,8 @@ import { ico_cross_circle } from 'assets/icons/cross-circle';
 import { Modal } from 'components/modal';
 import { IconButton } from 'components/icon-button';
 
-import { useWallet } from 'services/ethereum';
-import { useModal } from 'services/ui';
+import { useModal } from 'store/hooks/useModal';
+import { useWallet } from 'store/hooks/useWallet';
 
 import styles from './module.scss';
 

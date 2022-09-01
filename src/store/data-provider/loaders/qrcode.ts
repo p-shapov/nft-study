@@ -11,7 +11,7 @@ import {
 
 import { fetchData } from 'shared/utils/fetch-data';
 
-import { Wallet } from '../wallet';
+import { Wallet } from '../../ethereum/wallet';
 
 export class QrcodeLoader {
   public qrcode = fetchData<string, null>(null);

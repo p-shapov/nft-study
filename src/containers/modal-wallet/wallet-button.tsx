@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { FC, ReactElement } from 'react';
+import { ModalName } from 'src/store/ui/modal/types';
 
 import { ico_coinbase } from 'assets/icons/coinbase';
 import { ico_metamask } from 'assets/icons/metamask';
@@ -7,10 +8,9 @@ import { ico_wallet_connect } from 'assets/icons/wallet-connect';
 
 import { Button } from 'components/button';
 
-import { WalletConnectorId } from 'services/ethereum/wallet/types';
-import { useModal } from 'services/ui';
-import { ModalName } from 'services/ui/modal/types';
-import { useWallet } from 'services/ethereum';
+import { WalletConnectorId } from 'store/ethereum';
+import { useModal } from 'store/hooks/useModal';
+import { useWallet } from 'store/hooks/useWallet';
 
 const walletIcons: Record<WalletConnectorId, ReactElement> = {
   [WalletConnectorId.METAMASK]: ico_metamask,

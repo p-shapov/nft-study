@@ -7,7 +7,7 @@ import links from 'assets/data/header-links.json';
 
 import { DisconnectButton } from 'containers/disconnect-button';
 
-import { useWallet } from 'services/ethereum';
+import { useWallet } from 'store/hooks/useWallet';
 
 import styles from './module.scss';
 

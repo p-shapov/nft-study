@@ -1,6 +1,6 @@
-import { Wallet } from '../wallet';
-import { BalanceLoader } from './balance-loader';
-import { QrcodeLoader } from './qrcode-loader';
+import { Wallet } from '../ethereum/wallet';
+import { BalanceLoader } from './loaders/balance';
+import { QrcodeLoader } from './loaders/qrcode';
 
 export class DataProvider {
   public get balance() {

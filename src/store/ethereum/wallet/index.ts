@@ -1,65 +1,31 @@
-import { flow, makeObservable, observable, runInAction } from 'mobx';
-import { createClient, configureChains } from '@wagmi/core';
+import { computed, flow, makeObservable, observable, runInAction } from 'mobx';
 import type { Connector, ConnectorData } from '@wagmi/core';
-import { publicProvider } from '@wagmi/core/providers/public';
-import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet';
-import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask';
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 
-import { PREFERRED_CHAIN_ID, SUPPORTED_CHAINS } from 'shared/constants';
+import { PREFERRED_CHAIN_ID } from 'shared/constants';
 
 import { WalletChain, WalletConnectorId, WalletLocalStorageKey, WalletStatus } from './types';
-
-const { chains, provider, webSocketProvider } = configureChains(SUPPORTED_CHAINS, [publicProvider()]);
-
-const connectors: Record<WalletConnectorId, Connector> = {
-  [WalletConnectorId.METAMASK]: new MetaMaskConnector({
-    chains,
-    options: {
-      shimDisconnect: true,
-      shimChainChangedDisconnect: true,
-      UNSTABLE_shimOnConnectSelectAccount: true,
-    },
-  }),
-  [WalletConnectorId.COINBASE]: new CoinbaseWalletConnector({
-    chains,
-    options: {
-      appName: 'Metalamp NFT project',
-      headlessMode: true,
-      reloadOnDisconnect: false,
-      chainId: PREFERRED_CHAIN_ID,
-    },
-  }),
-  [WalletConnectorId.WALLET_CONNECT]: new WalletConnectConnector({
-    chains,
-    options: {
-      qrcode: false,
-      chainId: PREFERRED_CHAIN_ID,
-    },
-  }),
-};
-
-const client = createClient({
-  autoConnect: true,
-  connectors: Object.values(connectors),
-  provider,
-  webSocketProvider,
-});
+import { client, connectors, provider } from './client';
 
 export class Wallet {
+  public readonly connectors = connectors;
+
   public isReady = false;
   public account: string | null = null;
   public status: WalletStatus = 'disconnected';
   public chain: WalletChain | null = null;
-  public error: Error | null = null;
-  public get connectors() {
-    return connectors;
+  public error: string | null = null;
+
+  public get provider() {
+    if (this.chain?.id) return provider({ chainId: this.chain.id });
+
+    return null;
   }
+
   public get connector() {
     const id = this.connectorId;
 
     if (id) {
-      const connector = this.connectors[id];
+      const connector = connectors[id];
 
       if (connector !== this.bufferedConnector) {
         this.bufferedConnector?.off('change', this.handleChange);
@@ -123,6 +89,7 @@ export class Wallet {
 
   constructor() {
     makeObservable(this, {
+      provider: computed,
       connect: flow.bound,
       disconnect: flow.bound,
       isReady: observable.ref,
@@ -192,7 +159,7 @@ export class Wallet {
   };
 
   private handleError = (error: unknown) => {
-    if (error instanceof Error) runInAction(() => this.setState({ error }));
+    runInAction(() => this.setState({ error: error instanceof Error ? error.message : 'Unknown error' }));
 
     return true;
   };

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { FC, ReactNode } from 'react';
 
-import { useWallet } from 'services/ethereum';
+import { useWallet } from 'store/hooks/useWallet';
 
 import styles from './module.scss';
 

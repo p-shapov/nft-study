@@ -8,22 +8,23 @@ import { ico_wallet_connect } from 'assets/icons/wallet-connect';
 
 import { QRCode } from 'components/qr-code';
 
-import { useDataProvider, useWallet } from 'services/ethereum';
-import { WalletConnectorId } from 'services/ethereum/wallet/types';
-
 import { objectEntries } from 'shared/utils/object-entries';
+
+import { WalletConnectorId } from 'store/ethereum';
+import { useDataProvider } from 'store/hooks/useDataProvider';
+import { useWallet } from 'store/hooks/useWallet';
 
 import { Connection } from './connection';
 import { ModalWallet } from './modal-wallet';
-import styles from './module.scss';
 import { WalletButton } from './wallet-button';
+import styles from './module.scss';
 
 export const ModalConnect: FC = observer(() => {
-  const connectorEntries = useWallet((wallet) => objectEntries(wallet.connectors));
+  const connectors = useWallet((wallet) => objectEntries(wallet.connectors));
 
   return (
     <ModalWallet title="Connect" isRoot>
-      {connectorEntries.map(([id, connector]) => {
+      {connectors.map(([id, connector]) => {
         return (
           <WalletButton key={id} id={id}>
             {connector.name}

@@ -7,22 +7,19 @@ import React from 'react';
 
 import { SuspendReady } from 'containers/suspend-ready';
 
-import { UIProvider } from 'services/ui';
-import { EthereumProvider } from 'services/ethereum';
+import { StoreProvider } from 'store/context';
 
 import { App } from './app';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <EthereumProvider>
-      <UIProvider>
-        <BrowserRouter>
-          <SuspendReady>
-            <App />
-          </SuspendReady>
-        </BrowserRouter>
-      </UIProvider>
-    </EthereumProvider>
+    <StoreProvider>
+      <BrowserRouter>
+        <SuspendReady>
+          <App />
+        </SuspendReady>
+      </BrowserRouter>
+    </StoreProvider>
   </React.StrictMode>,
 );

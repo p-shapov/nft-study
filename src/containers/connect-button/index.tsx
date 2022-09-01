@@ -3,8 +3,8 @@ import { FC } from 'react';
 
 import { Button } from 'components/button';
 
-import { useModal } from 'services/ui';
-import { ModalName } from 'services/ui/modal/types';
+import { ModalName } from 'store/ui';
+import { useModal } from 'store/hooks/useModal';
 
 export type Props = {
   children?: string;

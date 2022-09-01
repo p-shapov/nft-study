@@ -53,12 +53,12 @@
             "position": "before"
           },
           {
-            "pattern": "services/**",
+            "pattern": "shared/**",
             "group": "parent",
             "position": "before"
           },
           {
-            "pattern": "shared/**",
+            "pattern": "store/**",
             "group": "parent",
             "position": "before"
           }

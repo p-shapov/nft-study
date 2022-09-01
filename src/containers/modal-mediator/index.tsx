@@ -3,8 +3,8 @@ import { observer } from 'mobx-react-lite';
 
 import { ModalCoinbase, ModalMetamask, ModalWalletConnect, ModalConnect } from 'containers/modal-wallet';
 
-import { useModal } from 'services/ui';
-import { ModalName } from 'services/ui/modal/types';
+import { ModalName } from 'store/ui';
+import { useModal } from 'store/hooks/useModal';
 
 const modals: Record<ModalName, ReactElement> = {
   [ModalName.WALLET]: <ModalConnect />,
