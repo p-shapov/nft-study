@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 
 import { Button } from 'components/button';
 
-import { useWallet } from 'services/store';
+import { useWallet } from 'store/hooks/useWallet';
 
 import styles from './module.scss';
 

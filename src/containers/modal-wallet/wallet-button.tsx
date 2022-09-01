@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { FC, ReactElement } from 'react';
-import { ModalName } from 'src/store/ui/modal/types';
 
 import { ico_coinbase } from 'assets/icons/coinbase';
 import { ico_metamask } from 'assets/icons/metamask';
@@ -8,6 +7,7 @@ import { ico_wallet_connect } from 'assets/icons/wallet-connect';
 
 import { Button } from 'components/button';
 
+import { ModalName } from 'store/ui';
 import { WalletConnectorId } from 'store/ethereum';
 import { useModal } from 'store/hooks/useModal';
 import { useWallet } from 'store/hooks/useWallet';
