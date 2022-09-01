@@ -4,12 +4,13 @@ export const useTimeout = (cb: () => void, ms: number | null, deps: Array<unknow
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    if (ms !== null) timeoutRef.current = setTimeout(cb, ms || 0);
+    if (ms !== null) timeoutRef.current = setTimeout(cb, ms);
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [ms, ...deps]); // eslint-disable-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ms, ...deps]);
 };

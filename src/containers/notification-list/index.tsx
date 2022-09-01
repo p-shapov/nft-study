@@ -31,9 +31,7 @@ export const NotificationList = observer(() => {
               theme={themeMap[item.type]}
               onClose={createHandleClose(item)}
               {...item}
-            >
-              {item.title}
-            </Notification>
+            />
           ))}
         </div>
       )}

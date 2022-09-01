@@ -11,5 +11,6 @@ export const useInterval = (cb: () => void, ms: number | null, deps: Array<unkno
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [ms, ...deps]); // eslint-disable-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ms, ...deps]);
 };
