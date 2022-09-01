@@ -10,7 +10,7 @@ import styles from './module.scss';
 export const DevPanel: FC = observer(() => {
   const [expanded, setExpanded] = useState(false);
 
-  const { wallet, modal } = useStore();
+  const { wallet, modal, notification } = useStore();
 
   const handleTogglePanel = () => setExpanded((x) => !x);
 
@@ -35,6 +35,9 @@ export const DevPanel: FC = observer(() => {
                 modal: {
                   current: modal.current,
                   stack: modal.stack,
+                },
+                notification: {
+                  stack: notification.stack,
                 },
               },
             }}

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router';
 import { FC, useEffect, useState } from 'react';
 
 import { ModalMediator } from 'containers/modal-mediator';
+import { NotificationList } from 'containers/notification-list';
 
 import { Layout } from 'layouts/common';
 
@@ -25,6 +26,7 @@ export const App = () => {
         </Routes>
       </Layout>
       <ModalMediator />
+      <NotificationList />
       {devPanel}
     </>
   );

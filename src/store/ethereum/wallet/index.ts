@@ -16,7 +16,7 @@ export class Wallet {
   public error: string | null = null;
 
   public get provider() {
-    if (this.chain?.id) return provider({ chainId: this.chain.id });
+    if (this.chain) return provider({ chainId: this.chain.id });
 
     return null;
   }
@@ -95,7 +95,7 @@ export class Wallet {
       isReady: observable.ref,
       account: observable.ref,
       status: observable.ref,
-      chain: observable.struct,
+      chain: observable.ref,
       error: observable.ref,
     });
     this.initWallet();

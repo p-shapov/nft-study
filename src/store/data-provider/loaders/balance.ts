@@ -40,34 +40,28 @@ export class BalanceLoader {
     onBecomeUnobserved(this, 'balance', disposeWalletListener);
   }
 
-  private loadBalance = async ({
-    account,
-    provider,
-  }: {
-    account: string | null;
-    provider: Wallet['provider'];
-  }) => {
-    this.balance.status = 'loading';
-    this.balance.value = null;
+  private loadBalance = async ({ account, provider }: Pick<Wallet, 'account' | 'provider'>) => {
+    if (provider && account) {
+      this.balance.value = null;
+      this.balance.error = null;
+      this.balance.status = 'loading';
 
-    try {
-      if (!provider) throw new Error('Wallet does not contain provider');
-      if (!account) throw new Error('Account does not exist');
+      try {
+        const balance = await provider.getBalance(account);
 
-      const balance = await provider.getBalance(account);
+        runInAction(() => {
+          this.balance.value = balance;
+          this.balance.status = 'succeed';
+        });
+      } catch (error) {
+        runInAction(() => {
+          this.balance.status = 'error';
+          this.balance.value = null;
 
-      runInAction(() => {
-        this.balance.value = balance;
-        this.balance.status = 'succeed';
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.balance.status = 'error';
-        this.balance.value = null;
-
-        if (error instanceof Error) this.balance.error = error.message;
-        else this.balance.error = 'Unknown error';
-      });
+          if (error instanceof Error) this.balance.error = error.message;
+          else this.balance.error = 'Unknown error';
+        });
+      }
     }
   };
 }

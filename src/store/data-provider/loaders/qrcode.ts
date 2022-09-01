@@ -39,6 +39,7 @@ export class QrcodeLoader {
   private loadQrcode = async (status: Wallet['status']) => {
     if (status === 'connecting') {
       this.qrcode.value = null;
+      this.qrcode.error = null;
       this.qrcode.status = 'loading';
 
       setTimeout(this.setQrcode);
@@ -74,6 +75,6 @@ export class QrcodeLoader {
 
     if (qrcode) return qrcode;
 
-    throw new Error('Connector does not provide any qrcode');
+    throw new Error('Connector does not provide qrcode');
   };
 }
