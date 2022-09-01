@@ -68,7 +68,6 @@
     "prettier": "2.7.1",
     "react-app-alias": "^2.2.1",
     "react-scripts": "^5.0.1",
-    "run-for-every-file": "^1.1.0",
     "sass": "^1.54.3",
     "serve": "^14.0.1",
     "typed-scss-modules": "^6.5.0",

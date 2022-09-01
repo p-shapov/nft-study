@@ -18,10 +18,9 @@ export type Props = {
 };
 
 export const Connection: FC<Props> = observer(({ id, children }) => {
-  const { connect, storeConnection, hasError, errorMessage } = useWallet((wallet) => ({
+  const { connect, storeConnection, errorMessage } = useWallet((wallet) => ({
     connect: wallet.connect,
     storeConnection: wallet.storeConnection,
-    hasError: computed(() => !!wallet.error).get(),
     errorMessage: computed(() => wallet.error?.message).get(),
   }));
 
@@ -30,7 +29,7 @@ export const Connection: FC<Props> = observer(({ id, children }) => {
   return (
     <>
       {children}
-      {!hasError && (
+      {!errorMessage && (
         <div className={styles['description']}>
           <span className={styles['title']}>Requesting...</span>
           <div className={styles['loader']}>
@@ -38,7 +37,7 @@ export const Connection: FC<Props> = observer(({ id, children }) => {
           </div>
         </div>
       )}
-      {hasError && (
+      {errorMessage && (
         <>
           <div className={styles['description']}>
             <span className={styles['title']}>Request failed:</span>

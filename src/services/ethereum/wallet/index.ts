@@ -1,15 +1,16 @@
 import { flow, makeObservable, observable, runInAction } from 'mobx';
 import { createClient, configureChains } from '@wagmi/core';
 import type { Connector, ConnectorData } from '@wagmi/core';
-import { goerli } from '@wagmi/core/chains';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet';
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask';
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 
+import { PREFERRED_CHAIN_ID, SUPPORTED_CHAINS } from 'shared/constants';
+
 import { WalletChain, WalletConnectorId, WalletLocalStorageKey, WalletStatus } from './types';
 
-const { chains, provider, webSocketProvider } = configureChains([goerli], [publicProvider()]);
+const { chains, provider, webSocketProvider } = configureChains(SUPPORTED_CHAINS, [publicProvider()]);
 
 const connectors: Record<WalletConnectorId, Connector> = {
   [WalletConnectorId.METAMASK]: new MetaMaskConnector({
@@ -26,14 +27,14 @@ const connectors: Record<WalletConnectorId, Connector> = {
       appName: 'Metalamp NFT project',
       headlessMode: true,
       reloadOnDisconnect: false,
-      chainId: goerli.id,
+      chainId: PREFERRED_CHAIN_ID,
     },
   }),
   [WalletConnectorId.WALLET_CONNECT]: new WalletConnectConnector({
     chains,
     options: {
       qrcode: false,
-      chainId: goerli.id,
+      chainId: PREFERRED_CHAIN_ID,
     },
   }),
 };
@@ -54,11 +55,35 @@ export class Wallet {
   public get connectors() {
     return connectors;
   }
+  public get connector() {
+    const id = this.connectorId;
+
+    if (id) {
+      const connector = this.connectors[id];
+
+      if (connector !== this.bufferedConnector) {
+        this.bufferedConnector?.off('change', this.handleChange);
+        this.bufferedConnector?.off('connect', this.handleConnect);
+        this.bufferedConnector?.off('disconnect', this.handleDisconnect);
+        this.bufferedConnector?.off('error', this.handleError);
+        this.bufferedConnector = connector;
+
+        connector.on('change', this.handleChange);
+        connector.on('connect', this.handleConnect);
+        connector.on('disconnect', this.handleDisconnect);
+        connector.on('error', this.handleError);
+      }
+
+      return connector;
+    }
+
+    return null;
+  }
 
   public readonly connect = flow(function* (
     this: Wallet,
     id: WalletConnectorId,
-    chainId: number | null = goerli.id,
+    chainId: number | null = PREFERRED_CHAIN_ID,
   ) {
     this.connectorId = id;
     this.setState({ status: 'connecting', error: null });
@@ -91,30 +116,6 @@ export class Wallet {
       }
     }
   });
-
-  public readonly getProvider = async () => {
-    try {
-      const provider = await this.connector?.getProvider();
-
-      return provider || null;
-    } catch (error) {
-      this.handleError(error);
-
-      return null;
-    }
-  };
-
-  public readonly getSigner = async () => {
-    try {
-      const signer = await this.connector?.getSigner();
-
-      return signer || null;
-    } catch (error) {
-      this.handleError(error);
-
-      return null;
-    }
-  };
 
   public readonly storeConnection = (connection: Wallet['currentConnection']) => {
     this.currentConnection = connection;
@@ -151,31 +152,6 @@ export class Wallet {
     else localStorage.removeItem(WalletLocalStorageKey.CONNECTOR_ID);
   }
 
-  private get connector() {
-    const id = this.connectorId;
-
-    if (id) {
-      const connector = this.connectors[id];
-
-      if (connector !== this.bufferedConnector) {
-        this.bufferedConnector?.off('change', this.handleChange);
-        this.bufferedConnector?.off('connect', this.handleConnect);
-        this.bufferedConnector?.off('disconnect', this.handleDisconnect);
-        this.bufferedConnector?.off('error', this.handleError);
-        this.bufferedConnector = connector;
-
-        connector.on('change', this.handleChange);
-        connector.on('connect', this.handleConnect);
-        connector.on('disconnect', this.handleDisconnect);
-        connector.on('error', this.handleError);
-      }
-
-      return connector;
-    }
-
-    return null;
-  }
-
   private async initWallet() {
     if (this.connectorId) {
       if (client.status !== 'disconnected') await this.connect(this.connectorId, null);
@@ -198,25 +174,25 @@ export class Wallet {
   };
 
   private handleConnect = (data: ConnectorData) => {
-    this.setState({ status: 'connected', ...data });
+    runInAction(() => this.setState({ status: 'connected', ...data }));
 
     return true;
   };
 
   private handleDisconnect = () => {
-    this.setState({ status: 'disconnected', account: null, chain: null, error: null });
+    runInAction(() => this.setState({ status: 'disconnected', account: null, chain: null, error: null }));
 
     return true;
   };
 
   private handleChange = (data: ConnectorData) => {
-    this.setState(data);
+    runInAction(() => this.setState(data));
 
     return true;
   };
 
   private handleError = (error: unknown) => {
-    if (error instanceof Error) this.setState({ error });
+    if (error instanceof Error) runInAction(() => this.setState({ error }));
 
     return true;
   };
